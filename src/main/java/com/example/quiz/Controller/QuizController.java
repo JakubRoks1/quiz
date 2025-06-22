@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/quizzes")
+@RequestMapping("/quizzes")
 public class QuizController {
     @Autowired
     private QuizRepository quizRepository;
@@ -21,8 +21,13 @@ public class QuizController {
         return quizRepository.findById(id).orElseThrow();
     }
 
-    @GetMapping("/{id}/questions")
-    public List<Question> getQuestions(@PathVariable Long id) {
-        return questionRepository.findByQuizId(id);
+    @PostMapping
+    public Quiz addQuiz(@RequestBody QuizDto dto) {
+        Quiz quiz = new Quiz();
+        quiz.setTitle(dto.title());
+        return quizRepository.save(quiz);
+    }
+
+    public record QuizDto(Long quizId, String title) {
     }
 }

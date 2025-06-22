@@ -16,15 +16,11 @@ public class Question {
     private String text;
     private String correctAnswer;
 
-    @ManyToOne
-    private Quiz quiz;
-
     public Question() {}
 
-    public Question(String text, String correctAnswer, Quiz quiz) {
+    public Question(String text, String correctAnswer) {
         this.text = text;
         this.correctAnswer = correctAnswer;
-        this.quiz = quiz;
     }
 
     public Long getId() {
@@ -51,11 +47,4 @@ public class Question {
         this.correctAnswer = correctAnswer;
     }
 
-    public Quiz getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
 }

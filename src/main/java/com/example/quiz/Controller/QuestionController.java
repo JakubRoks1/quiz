@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/questions")
+@RequestMapping("/questions")
 public class QuestionController {
     @Autowired
     private QuestionRepository questionRepository;
@@ -27,14 +27,9 @@ public class QuestionController {
         Question question = new Question();
         question.setText(dto.text());
         question.setCorrectAnswer(dto.correctAnswer());
-        question.setQuiz(quizRepository.findById(dto.quizId()).orElseThrow());
         return questionRepository.save(question);
     }
 
-    @GetMapping("/{id}/questions")
-    public List<Question> getQuestions(@PathVariable Long id) {
-        return questionRepository.findByQuizId(id);
-    }
 
     record QuestionDto(Long quizId, String text, String correctAnswer) {}
 }
