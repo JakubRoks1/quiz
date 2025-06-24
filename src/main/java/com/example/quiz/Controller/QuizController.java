@@ -33,6 +33,18 @@ public class QuizController {
         return quizRepository.findAll();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteQuiz(@PathVariable Long id) {
+        quizRepository.deleteById(id);
+    }
+
+    @PutMapping("/{id}")
+    public Quiz updateQuiz(@PathVariable Long id, @RequestBody QuizDto dto) {
+        Quiz quiz = quizRepository.findById(id).orElseThrow();
+        quiz.setTitle(dto.title());
+        return quizRepository.save(quiz);
+    }
+
     public record QuizDto(Long quizId, String title) {
     }
 }
