@@ -28,6 +28,11 @@ public class QuizController {
         return quizRepository.save(quiz);
     }
 
+    @GetMapping
+    public List<Quiz> getAllQuizzes() {
+        return quizRepository.findAll();
+    }
+
     public record QuizDto(Long quizId, String title) {
     }
 }
