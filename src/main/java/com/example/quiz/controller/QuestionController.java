@@ -1,20 +1,16 @@
-package com.example.quiz.Controller;
+package com.example.quiz.controller;
 
-import com.example.quiz.Entity.Question;
-import com.example.quiz.Entity.Quiz;
-import com.example.quiz.Repository.QuestionRepository;
-import com.example.quiz.Repository.QuizRepository;
+import com.example.quiz.entity.Question;
+import com.example.quiz.repository.QuestionRepository;
+import com.example.quiz.repository.QuizRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/questions")

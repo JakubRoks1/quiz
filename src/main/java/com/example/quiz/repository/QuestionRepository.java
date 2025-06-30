@@ -1,9 +1,7 @@
-package com.example.quiz.Repository;
+package com.example.quiz.repository;
 
-import com.example.quiz.Entity.Question;
+import com.example.quiz.entity.Question;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
 
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 }

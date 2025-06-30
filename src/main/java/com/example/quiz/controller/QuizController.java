@@ -1,9 +1,8 @@
-package com.example.quiz.Controller;
+package com.example.quiz.controller;
 
-import com.example.quiz.Entity.Question;
-import com.example.quiz.Entity.Quiz;
-import com.example.quiz.Repository.QuestionRepository;
-import com.example.quiz.Repository.QuizRepository;
+import com.example.quiz.entity.Quiz;
+import com.example.quiz.repository.QuestionRepository;
+import com.example.quiz.repository.QuizRepository;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;

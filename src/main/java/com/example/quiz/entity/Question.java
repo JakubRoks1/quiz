@@ -1,9 +1,8 @@
-package com.example.quiz.Entity;
+package com.example.quiz.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 @Data
