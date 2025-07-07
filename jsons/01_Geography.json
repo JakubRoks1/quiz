@@ -1,0 +1,45 @@
+{
+  "title": "Geography Quiz",
+  "questions": [
+    {
+      "text": "What is the capital of France?",
+      "correctAnswer": "Paris"
+    },
+    {
+      "text": "Which continent is the Sahara Desert located on?",
+      "correctAnswer": "Africa"
+    },
+    {
+      "text": "Which is the largest country in the world by area?",
+      "correctAnswer": "Russia"
+    },
+    {
+      "text": "What is the longest river in the world?",
+      "correctAnswer": "Nile"
+    },
+    {
+      "text": "Which ocean lies on the east coast of the United States?",
+      "correctAnswer": "Atlantic Ocean"
+    },
+    {
+      "text": "Mount Everest is located in which mountain range?",
+      "correctAnswer": "Himalayas"
+    },
+    {
+      "text": "What is the capital city of Australia?",
+      "correctAnswer": "Canberra"
+    },
+    {
+      "text": "Which country has the most islands in the world?",
+      "correctAnswer": "Sweden"
+    },
+    {
+      "text": "Which U.S. state is known as the 'Sunshine State'?",
+      "correctAnswer": "Florida"
+    },
+    {
+      "text": "What is the smallest country in the world?",
+      "correctAnswer": "Vatican City"
+    }
+  ]
+}
