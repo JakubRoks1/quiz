@@ -5,9 +5,11 @@ import com.example.quiz.dto.QuizDTO;
 import com.example.quiz.entity.Quiz;
 import com.example.quiz.repository.QuestionRepository;
 import com.example.quiz.repository.QuizRepository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class QuizService {
     private final QuizRepository quizRepository;
 

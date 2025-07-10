@@ -1,10 +1,20 @@
 package com.example.quiz.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import lombok.Data;
 
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+@Data
 @Entity
 public class Quiz {
     @Id
@@ -12,18 +22,16 @@ public class Quiz {
     private Long id;
     private String title;
 
+    @OneToMany
+    private Set<Question> questions = new HashSet<>();
+
     public Quiz() {}
 
-    public Long getId() {
-        return id;
-    }
-    public void setId(Long id) {
-        this.id = id;
-    }
-    public String getTitle() {
-        return title;
-    }
-    public void setTitle(String title) {
-        this.title = title;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getTitle() { return title; }
+    public void setTitle(String title) { this.title = title; }
+
+    public Set<Question> getQuestions() { return questions; }
+    public void setQuestions(Set<Question> questions) { this.questions = questions; }
 }
