@@ -5,6 +5,10 @@ import com.jakubroks.quiz.dto.Person;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
+import com.jakubroks.quiz.exception.GameAlreadyStartedException;
+import com.jakubroks.quiz.exception.GameNotFoundException;
+import com.jakubroks.quiz.exception.QuizNotFoundException;
+import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.QuizRepository;
@@ -18,9 +22,7 @@ import java.util.UUID;
 @Service
 public class GameService {
 
-
     private PendingGame pendingGame;
-
 
     private final QuizRepository quizRepository;
 
@@ -36,11 +38,15 @@ public class GameService {
 
     public GameEntry startGame(GameInput gameInput) {
         if (pendingGame != null) {
-            throw new IllegalStateException("Game already started");
+            throw new GameAlreadyStartedException("Game already started");
         }
 
         Quiz quiz = quizRepository.findByTitle(gameInput.quizName())
-                .orElseThrow(() -> new IllegalArgumentException("Quiz not found"));
+                .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
+
+        if (gameInput.size() > quiz.getQuestions().size()) {
+            throw new TooManyQuestionsRequestedException("Requested more questions than available in quiz");
+        }
 
         List<Question> questions = new ArrayList<>(quiz.getQuestions());
         Collections.shuffle(questions);
@@ -54,7 +60,7 @@ public class GameService {
 
     public GameEntry submitAnswer(AnswerInput answerInput) {
         if (pendingGame == null || !pendingGame.getId().equals(answerInput.id())) {
-            throw new IllegalStateException("Game not started or invalid id");
+            throw new GameNotFoundException("Game not started or invalid id");
         }
 
         boolean isOngoing = pendingGame.submitAnswer(answerInput.answer());
@@ -74,6 +80,4 @@ public class GameService {
             return result;
         }
     }
-
-
 }
