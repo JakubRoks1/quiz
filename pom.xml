@@ -8,8 +8,8 @@
         <version>3.5.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
-    <artifactId>Quiz</artifactId>
+    <groupId>io.github.jakubroks1</groupId>
+    <artifactId>quiz</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>Quiz</name>
     <description>Quiz</description>
