@@ -42,6 +42,24 @@ public class TestConfig {
 
         geographyQuiz.setQuestions(geographyQuestions);
         quizRepository.save(geographyQuiz);
+
+        var scienceQuiz = new Quiz();
+        scienceQuiz.setTitle("Science Quiz");
+
+        Set<Question> scienceQuestions = new HashSet<>();
+        scienceQuestions.add(saveQuestion("What planet is known as the Red Planet?", "Mars"));
+        scienceQuestions.add(saveQuestion("What is the chemical symbol for water?", "H2O"));
+        scienceQuestions.add(saveQuestion("What gas do plants absorb from the atmosphere?", "Carbon dioxide"));
+        scienceQuestions.add(saveQuestion("How many bones are in the adult human body?", "206"));
+        scienceQuestions.add(saveQuestion("What force keeps us on the ground?", "Gravity"));
+        scienceQuestions.add(saveQuestion("What is the largest organ in the human body?", "Skin"));
+        scienceQuestions.add(saveQuestion("What particle carries a negative charge?", "Electron"));
+        scienceQuestions.add(saveQuestion("Who developed the theory of relativity?", "Albert Einstein"));
+        scienceQuestions.add(saveQuestion("What is the boiling point of water at sea level in Celsius?", "100"));
+        scienceQuestions.add(saveQuestion("What is the process by which plants make their food?", "Photosynthesis"));
+
+        scienceQuiz.setQuestions(scienceQuestions);
+        quizRepository.save(scienceQuiz);
     }
 
     private Question saveQuestion(String text, String correctAnswer) {
