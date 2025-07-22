@@ -7,6 +7,7 @@ import com.jakubroks.quiz.service.GameService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,14 +22,17 @@ public class GameController {
     }
 
     @PostMapping("/start")
-    public ResponseEntity<?> startGame(@RequestBody GameInput gameInput) {
-        GameEntry people = gameService.startGame(gameInput);
-
+    public ResponseEntity<?> startGame(
+            @RequestHeader("user") String userId,
+            @RequestBody GameInput gameInput) {
+        GameEntry people = gameService.startGame(userId, gameInput);
         return ResponseEntity.ok(people);
     }
 
     @PostMapping("/answer")
-    public ResponseEntity<?> answer(@RequestBody AnswerInput answerInput) {
-        return ResponseEntity.ok(gameService.submitAnswer(answerInput));
+    public ResponseEntity<?> answer(
+            @RequestHeader("user") String userId,
+            @RequestBody AnswerInput answerInput) {
+        return ResponseEntity.ok(gameService.submitAnswer(userId, answerInput));
     }
 }

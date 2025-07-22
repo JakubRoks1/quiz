@@ -17,13 +17,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class GameService {
 
-    private PendingGame pendingGame;
-
+    private final Map<String, PendingGame> userGames = new ConcurrentHashMap<>();
     private final QuizRepository quizRepository;
 
     public GameService(QuizRepository quizRepository) {
@@ -36,9 +37,9 @@ public class GameService {
             new Person(3L, "Piotr")
     );
 
-    public GameEntry startGame(GameInput gameInput) {
-        if (pendingGame != null) {
-            throw new GameAlreadyStartedException("Game already started");
+    public GameEntry startGame(String userId, GameInput gameInput) {
+        if (userGames.containsKey(userId)) {
+            throw new GameAlreadyStartedException("Game already started for this user");
         }
 
         Quiz quiz = quizRepository.findByTitle(gameInput.quizName())
@@ -52,15 +53,18 @@ public class GameService {
         Collections.shuffle(questions);
         List<Question> selectedQuestions = questions.stream().limit(gameInput.size()).toList();
 
-        pendingGame = new PendingGame(UUID.randomUUID(), quiz, selectedQuestions);
+        PendingGame pendingGame = new PendingGame(UUID.randomUUID(), quiz, selectedQuestions);
+        userGames.put(userId, pendingGame);
 
         String msg = "Pytanie 1: " + selectedQuestions.get(0).getText();
         return new GameEntry(pendingGame.getId(), msg);
     }
 
-    public GameEntry submitAnswer(AnswerInput answerInput) {
+    public GameEntry submitAnswer(String userId, AnswerInput answerInput) {
+        PendingGame pendingGame = userGames.get(userId);
+
         if (pendingGame == null || !pendingGame.getId().equals(answerInput.id())) {
-            throw new GameNotFoundException("Game not started or invalid id");
+            throw new GameNotFoundException("Game not started or invalid id for this user");
         }
 
         boolean isOngoing = pendingGame.submitAnswer(answerInput.answer());
@@ -76,7 +80,7 @@ public class GameService {
                     pendingGame.getAnswers(),
                     pendingGame.getScore()
             );
-            pendingGame = null;
+            userGames.remove(userId);
             return result;
         }
     }
