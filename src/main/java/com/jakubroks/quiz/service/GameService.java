@@ -31,12 +31,6 @@ public class GameService {
         this.quizRepository = quizRepository;
     }
 
-    private static final List<Person> AVAILABLE_PEOPLE = List.of(
-            new Person(1L, "Jan"),
-            new Person(2L, "Anna"),
-            new Person(3L, "Piotr")
-    );
-
     public GameEntry startGame(String userId, GameInput gameInput) {
         if (userGames.containsKey(userId)) {
             throw new GameAlreadyStartedException("Game already started for this user");
