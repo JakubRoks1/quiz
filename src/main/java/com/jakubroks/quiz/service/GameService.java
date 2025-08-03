@@ -1,7 +1,6 @@
 package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.PendingGame;
-import com.jakubroks.quiz.dto.Person;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
