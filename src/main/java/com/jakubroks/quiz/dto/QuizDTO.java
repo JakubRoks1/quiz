@@ -1,4 +1,4 @@
 package com.jakubroks.quiz.dto;
 
-public record QuizDTO(Long quizId, String title) {
+public record QuizDTO(String title) {
 }
