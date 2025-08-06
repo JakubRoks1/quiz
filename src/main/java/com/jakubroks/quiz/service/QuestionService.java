@@ -6,8 +6,6 @@ import com.jakubroks.quiz.repository.QuestionRepository;
 import com.jakubroks.quiz.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class QuestionService {
     private final QuestionRepository questionRepository;
@@ -34,9 +32,5 @@ public class QuestionService {
         question.setText(dto.text());
         question.setCorrectAnswer(dto.correctAnswer());
         return questionRepository.save(question);
-    }
-
-    public List<Question> getAllQuestions() {
-        return questionRepository.findAll();
     }
 }

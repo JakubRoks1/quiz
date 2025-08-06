@@ -2,7 +2,6 @@ package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.controller.QuizController;
 import com.jakubroks.quiz.dto.QuizDTO;
-import com.jakubroks.quiz.exception.QuizNotFoundException;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.repository.QuestionRepository;
 import com.jakubroks.quiz.repository.QuizRepository;
@@ -13,9 +12,9 @@ import org.mockito.ArgumentCaptor;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class QuizServiceTest {
