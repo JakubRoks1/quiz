@@ -25,7 +25,7 @@ public class QuizController {
 
     @PostMapping
     public Quiz addQuiz(@RequestBody QuizDto dto) {
-        return quizService.addQuiz(new QuizDTO(dto.quizId(), dto.title()));
+        return quizService.addQuiz(new QuizDTO(dto.title()));
     }
 
     @GetMapping
