@@ -1,6 +1,5 @@
 package com.jakubroks.quiz.service;
 
-import com.jakubroks.quiz.PendingGame;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
@@ -14,12 +13,16 @@ import com.jakubroks.quiz.repository.QuizRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class GameServiceTest {
+
     private QuizRepository quizRepository;
     private GameService gameService;
 
@@ -28,7 +31,6 @@ class GameServiceTest {
         quizRepository = mock(QuizRepository.class);
         gameService = new GameService(quizRepository);
     }
-
 
     @Test
     void givenNonExistingQuiz_whenStartGame_thenShouldThrowQuizNotFoundException() {
@@ -56,7 +58,7 @@ class GameServiceTest {
         GameInput input = new GameInput("quiz", 5);
 
         Quiz quiz = new Quiz();
-        quiz.setQuestions(Set.of(new Question(), new Question())); // tylko 2 pytania
+        quiz.setQuestions(Set.of(new Question(), new Question())); // only 2 questions
 
         when(quizRepository.findByTitle("quiz")).thenReturn(Optional.of(quiz));
 

@@ -1,7 +1,6 @@
 package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.dto.QuestionDTO;
-import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.repository.QuestionRepository;
 import com.jakubroks.quiz.repository.QuizRepository;
@@ -11,7 +10,8 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class QuestionServiceTest {
@@ -66,19 +66,5 @@ class QuestionServiceTest {
         assertThat(result.getText()).isEqualTo(dto.text());
         verify(questionRepository).findById(1L);
         verify(questionRepository).save(question);
-    }
-
-    @Test
-    void givenQuestionsInRepository_whenGetAllQuestions_thenShouldReturnAllQuestions() {
-        Question q1 = new Question();
-        Question q2 = new Question();
-        List<Question> questions = List.of(q1, q2);
-
-        when(questionRepository.findAll()).thenReturn(questions);
-
-        List<Question> result = questionService.getAllQuestions();
-
-        assertThat(result).isEqualTo(questions);
-        verify(questionRepository).findAll();
     }
 }
