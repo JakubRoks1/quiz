@@ -1,6 +1,8 @@
 package com.jakubroks.quiz.service;
 
+import com.jakubroks.quiz.PdfReportGenerator;
 import com.jakubroks.quiz.PendingGame;
+import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
@@ -13,6 +15,8 @@ import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.QuizRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -76,5 +80,11 @@ public class GameService {
             userGames.remove(userId);
             return result;
         }
+    }
+
+    public byte[] generateGameReportPdf(QuizResultDTO result) throws IOException, IOException {
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        PdfReportGenerator.saveQuizResultToPdf(result, out);
+        return out.toByteArray();
     }
 }
