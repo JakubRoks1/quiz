@@ -23,7 +23,7 @@ public class SavedGameEntry {
     // konstruktor pomocniczy
     public SavedGameEntry(QuizResultDTO quizResultDTO) {
         this.id = quizResultDTO.id();
-        this.quizResult = serialize(quizResult);
+        this.quizResult = serialize(quizResultDTO);
     }
 
     public SavedGameEntry() {
@@ -34,7 +34,7 @@ public class SavedGameEntry {
         return deserialize(this.quizResult);
     }
 
-    private byte[] serialize(Object obj) {
+    private byte[] serialize(QuizResultDTO obj) {
         try (ByteArrayOutputStream bos = new ByteArrayOutputStream();
              ObjectOutputStream out = new ObjectOutputStream(bos)) {
             out.writeObject(obj);
