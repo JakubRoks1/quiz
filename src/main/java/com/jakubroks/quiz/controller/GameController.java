@@ -2,32 +2,31 @@ package com.jakubroks.quiz.controller;
 
 import com.jakubroks.quiz.dto.QuestionDTO;
 import com.jakubroks.quiz.dto.QuizResultDTO;
+import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.service.GameService;
+import com.jakubroks.quiz.service.ReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/game")
+@RequiredArgsConstructor
 public class GameController {
 
     private final GameService gameService;
+    private final ReportService reportService;
 
-    public GameController(GameService gameService) {
-        this.gameService = gameService;
-    }
 
     @PostMapping("/start")
     public ResponseEntity<?> startGame(
@@ -52,7 +51,12 @@ public class GameController {
                     entry.answers(),
                     entry.score()
             );
-            byte[] pdfBytes = gameService.generateGameReportPdf(result);
+            byte[] pdfBytes = reportService.generateReport(result);
+
+            SavedGameEntry s = new SavedGameEntry(result);
+            // tu trzeba javowo zserializowac obiekt
+            System.out.println(Arrays.toString(s.getQuizResult()));
+            System.out.println(s.toQuizResultDTO());
 
             Path filePath = Path.of("reports", "quiz_report_" + result.id() + ".pdf");
             Files.createDirectories(filePath.getParent());
