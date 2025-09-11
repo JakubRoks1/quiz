@@ -1,7 +1,6 @@
 package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.PendingGame;
-import com.jakubroks.quiz.dto.Person;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
@@ -30,12 +29,6 @@ public class GameService {
     public GameService(QuizRepository quizRepository) {
         this.quizRepository = quizRepository;
     }
-
-    private static final List<Person> AVAILABLE_PEOPLE = List.of(
-            new Person(1L, "Jan"),
-            new Person(2L, "Anna"),
-            new Person(3L, "Piotr")
-    );
 
     public GameEntry startGame(String userId, GameInput gameInput) {
         if (userGames.containsKey(userId)) {
