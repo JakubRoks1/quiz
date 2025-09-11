@@ -1,4 +1,6 @@
 package com.jakubroks.quiz.dto;
 
-public record QuestionDTO(String text, String correctAnswer) {
+import java.io.Serializable;
+
+public record QuestionDTO(String text, String correctAnswer) implements Serializable {
 }

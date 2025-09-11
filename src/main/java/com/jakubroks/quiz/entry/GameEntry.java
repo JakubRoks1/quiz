@@ -3,11 +3,12 @@ package com.jakubroks.quiz.entry;
 import com.jakubroks.quiz.entity.Question;
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public record GameEntry(UUID id, String question, List<Question> questions, List<String> answers, Integer score) {
+public record GameEntry(UUID id, String question, List<Question> questions, List<String> answers, Integer score) implements Serializable {
     public GameEntry(UUID id, String question) {
         this(id, question, null, null, null);
     }

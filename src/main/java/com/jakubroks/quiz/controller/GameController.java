@@ -2,32 +2,42 @@ package com.jakubroks.quiz.controller;
 
 import com.jakubroks.quiz.dto.QuestionDTO;
 import com.jakubroks.quiz.dto.QuizResultDTO;
+import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
+import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import com.jakubroks.quiz.service.GameService;
+import com.jakubroks.quiz.service.ReportService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @RestController
 @RequestMapping("/game")
+//@RequiredArgsConstructor
 public class GameController {
 
     private final GameService gameService;
+    private final ReportService reportService;
 
-    public GameController(GameService gameService) {
+    private final SavedGameEntryRepository savedGameEntryRepository;
+
+    public GameController(GameService gameService, ReportService reportService, SavedGameEntryRepository savedGameEntryRepository) {
         this.gameService = gameService;
+        this.reportService = reportService;
+        this.savedGameEntryRepository = savedGameEntryRepository;
     }
+
 
     @PostMapping("/start")
     public ResponseEntity<?> startGame(
@@ -52,7 +62,15 @@ public class GameController {
                     entry.answers(),
                     entry.score()
             );
-            byte[] pdfBytes = gameService.generateGameReportPdf(result);
+
+            gameService.saveFinishedGame(result);
+
+            byte[] pdfBytes = reportService.generateReport(result);
+
+            SavedGameEntry s = new SavedGameEntry(result);
+            // tu trzeba javowo zserializowac obiekt
+            System.out.println(Arrays.toString(s.getQuizResult()));
+            System.out.println(s.toQuizResultDTO());
 
             Path filePath = Path.of("reports", "quiz_report_" + result.id() + ".pdf");
             Files.createDirectories(filePath.getParent());
@@ -65,5 +83,13 @@ public class GameController {
         } else {
             return ResponseEntity.ok(entry);
         }
+    }
+
+    @GetMapping("/result/{id}")
+    public ResponseEntity<QuizResultDTO> getQuizResult(@PathVariable String id) {
+        SavedGameEntry entry = savedGameEntryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        QuizResultDTO result = entry.toQuizResultDTO();
+        return ResponseEntity.ok(result);
     }
 }
