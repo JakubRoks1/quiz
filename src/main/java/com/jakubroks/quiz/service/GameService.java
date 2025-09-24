@@ -1,8 +1,10 @@
 package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.PendingGame;
+import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.exception.GameAlreadyStartedException;
 import com.jakubroks.quiz.exception.GameNotFoundException;
@@ -11,6 +13,7 @@ import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.QuizRepository;
+import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -21,9 +24,11 @@ public class GameService {
 
     private final Map<String, PendingGame> userGames = new ConcurrentHashMap<>();
     private final QuizRepository quizRepository;
+    private final SavedGameEntryRepository savedGameEntryRepository;
 
-    public GameService(QuizRepository quizRepository) {
+    public GameService(QuizRepository quizRepository, SavedGameEntryRepository savedGameEntryRepository) {
         this.quizRepository = quizRepository;
+        this.savedGameEntryRepository = savedGameEntryRepository;
     }
 
     public GameEntry startGame(String userId, GameInput gameInput) {
@@ -73,4 +78,15 @@ public class GameService {
             return result;
         }
     }
+
+    public void saveFinishedGame(QuizResultDTO result) {
+        SavedGameEntry entry = new SavedGameEntry(result);
+        savedGameEntryRepository.save(entry);
+    }
+
+
+
+
+
+
 }

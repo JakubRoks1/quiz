@@ -10,7 +10,7 @@ import lombok.Data;
 import java.io.*;
 
 @Entity
-@Table(name = "questions")
+@Table(name = "quiz_results")
 @Data
 public class SavedGameEntry {
 
@@ -27,6 +27,10 @@ public class SavedGameEntry {
     }
 
     public SavedGameEntry() {
+    }
+
+    public byte[] getQuizResult() {
+        return quizResult;
     }
 
     // getter

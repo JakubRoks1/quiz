@@ -6,13 +6,16 @@ import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
+import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import com.jakubroks.quiz.service.GameService;
 import com.jakubroks.quiz.service.ReportService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -21,11 +24,19 @@ import java.util.Arrays;
 
 @RestController
 @RequestMapping("/game")
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class GameController {
 
     private final GameService gameService;
     private final ReportService reportService;
+
+    private final SavedGameEntryRepository savedGameEntryRepository;
+
+    public GameController(GameService gameService, ReportService reportService, SavedGameEntryRepository savedGameEntryRepository) {
+        this.gameService = gameService;
+        this.reportService = reportService;
+        this.savedGameEntryRepository = savedGameEntryRepository;
+    }
 
 
     @PostMapping("/start")
@@ -51,6 +62,9 @@ public class GameController {
                     entry.answers(),
                     entry.score()
             );
+
+            gameService.saveFinishedGame(result);
+
             byte[] pdfBytes = reportService.generateReport(result);
 
             SavedGameEntry s = new SavedGameEntry(result);
@@ -69,5 +83,13 @@ public class GameController {
         } else {
             return ResponseEntity.ok(entry);
         }
+    }
+
+    @GetMapping("/result/{id}")
+    public ResponseEntity<QuizResultDTO> getQuizResult(@PathVariable String id) {
+        SavedGameEntry entry = savedGameEntryRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        QuizResultDTO result = entry.toQuizResultDTO();
+        return ResponseEntity.ok(result);
     }
 }

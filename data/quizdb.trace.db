@@ -654,3 +654,12 @@ Caused by: org.h2.mvstore.MVStoreException: The file is locked: D:/Programming/R
 	at org.h2.mvstore.SingleFileStore.open(SingleFileStore.java:81)
 	at org.h2.mvstore.MVStore.<init>(MVStore.java:286)
 	... 26 more
+2025-09-24 09:37:52.828686+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM QUESTION QUESTIONS [*]QUESTION_ENTITY"; SQL statement:
+SELECT * FROM QUESTION QUESTIONS QUESTION_ENTITY [42000-232]
+2025-09-24 09:52:23.546009+02:00 jdbc[23]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Syntax error in SQL statement "SELECT * FROM QUIZ QUIZ [*]QUIZ_QUESTIONS"; SQL statement:
+SELECT * FROM QUIZ QUIZ QUIZ_QUESTIONS [42000-232]
+2025-09-24 10:16:16.647771+02:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLDataException: Data conversion error converting "da0aff2a-00a1-4696-a2a6-145d991aae86"; SQL statement:
+select sge1_0.id,sge1_0.quiz_result from questions sge1_0 where sge1_0.id=? [22018-232]

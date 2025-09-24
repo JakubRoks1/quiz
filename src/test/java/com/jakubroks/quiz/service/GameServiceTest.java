@@ -10,6 +10,7 @@ import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.QuizRepository;
+import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,10 +27,13 @@ class GameServiceTest {
     private QuizRepository quizRepository;
     private GameService gameService;
 
+    private SavedGameEntryRepository savedGameEntryRepository;
+
     @BeforeEach
     void setUp() {
         quizRepository = mock(QuizRepository.class);
-        gameService = new GameService(quizRepository);
+        savedGameEntryRepository = mock(SavedGameEntryRepository.class);
+        gameService = new GameService(quizRepository, savedGameEntryRepository);
     }
 
     @Test

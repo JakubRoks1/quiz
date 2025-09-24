@@ -17,8 +17,8 @@ import java.io.IOException;
 public class PdfReportGenerator {
 
     public byte[] saveQuizResultToPdf(QuizResultDTO result) {
-        try (val baos = new ByteArrayOutputStream();
-             val document = new PDDocument()) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             PDDocument document = new PDDocument()) {
 
             PDPage page = new PDPage(PDRectangle.A4);
             document.addPage(page);
