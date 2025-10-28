@@ -5,22 +5,28 @@ import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.repository.UserRepository;
 import com.jakubroks.quiz.security.PasswordHasher;
 import jakarta.transaction.Transactional;
+import lombok.Data;
+import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
-
 
 @Service
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
+    private final Map<String, User> loggedUsers;
 
-    public UserService(UserRepository userRepository, PasswordHasher passwordHasher) {
+    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, Map<String, User> loggedUsers) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
+        this.loggedUsers = loggedUsers;
     }
 
     public User register(RegisterRequest request) {
@@ -35,12 +41,6 @@ public class UserService {
         user.setPassword(hashed);
 
         return userRepository.save(user);
-    }
-
-    public boolean authenticate(String email, String rawPassword) {
-        return userRepository.findByEmail(email)
-                .map(u -> passwordHasher.matches(rawPassword, u.getPassword()))
-                .orElse(false);
     }
 
     @Transactional
@@ -58,5 +58,25 @@ public class UserService {
 
         user.setPassword(passwordHasher.hash(newPassword));
         userRepository.save(user);
+    }
+
+    public String authenticate(String email, String rawPassword) {
+        Optional<User> user = userRepository.findByEmail(email)
+                .filter(u -> passwordHasher.matches(rawPassword, u.getPassword()));
+        if (user.isEmpty()) {
+            return null;
+        }
+
+        String authKey = UUID.randomUUID().toString();
+        loggedUsers.put(authKey, user.get());
+        return authKey;
+    }
+
+    public boolean logout(String key) {
+        return loggedUsers.remove(key) != null;
+    }
+
+    public Optional<User> getByKey(String key) {
+        return Optional.ofNullable(loggedUsers.get(key));
     }
 }
