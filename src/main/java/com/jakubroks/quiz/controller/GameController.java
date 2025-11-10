@@ -8,6 +8,7 @@ import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.SavedGameEntryRepository;
+import com.jakubroks.quiz.service.AuthService;
 import com.jakubroks.quiz.service.GameService;
 import com.jakubroks.quiz.service.ReportService;
 import com.jakubroks.quiz.service.UserService;
@@ -38,37 +39,32 @@ public class GameController {
 
     private final SavedGameEntryRepository savedGameEntryRepository;
 
-    public GameController(GameService gameService, ReportService reportService, SavedGameEntryRepository savedGameEntryRepository, UserService userService) {
+    private final AuthService authService;
+
+    public GameController(GameService gameService, ReportService reportService, SavedGameEntryRepository savedGameEntryRepository, UserService userService, AuthService authService) {
         this.gameService = gameService;
         this.reportService = reportService;
         this.savedGameEntryRepository = savedGameEntryRepository;
         this.userService = userService;
+        this.authService = authService;
     }
-
-    private ResponseEntity<Object> requireLogin(String key, Function<User, ResponseEntity<Object>> ok) {
-        if (key == null || key.isBlank()) {
-            return ResponseEntity.status(401).body(Map.of("message","Missing X-KEY"));
-        }
-        return userService.getByKey(key)
-                .map(ok)
-                .orElseGet(() -> ResponseEntity.status(401).body(Map.of("message","Invalid or expired key")));
-    }
-
 
     @PostMapping("/start")
-    public ResponseEntity<Object> start(
-            @RequestHeader(value="X-KEY", required=false) String key,
-            @RequestBody GameInput in) {
-        return requireLogin(key, u -> ResponseEntity.ok(gameService.startGame(u.getId().toString(), in)));
+    public ResponseEntity<?> startGame(
+            @RequestAttribute("user") User user,
+            @RequestBody GameInput gameInput
+    ) {
+        GameEntry entry = gameService.startGame(user.getId().toString(), gameInput);
+        return ResponseEntity.ok(entry);
     }
 
-    @PostMapping("/answer")
-    public ResponseEntity<Object> answer(
-            @RequestHeader(value = "X-KEY", required = false) String key,
-            @RequestBody AnswerInput answerInput) throws IOException {
 
-        return requireLogin(key, u -> {
-            GameEntry entry = gameService.submitAnswer(u.getId().toString(), answerInput);
+    @PostMapping("/answer")
+    public ResponseEntity<?> answer(
+            @RequestAttribute("user") User user,
+            @RequestBody AnswerInput answerInput) throws IOException {
+        GameEntry entry = gameService.submitAnswer(user.getId().toString(), answerInput);
+
 
         if (entry.questions() != null && entry.answers() != null && entry.score() != null) {
             QuizResultDTO result = new QuizResultDTO(
@@ -90,13 +86,8 @@ public class GameController {
             System.out.println(s.toQuizResultDTO());
 
             Path filePath = Path.of("reports", "quiz_report_" + result.id() + ".pdf");
-
-            try {
-                Files.createDirectories(filePath.getParent());
-                Files.write(filePath, pdfBytes);
-            } catch (IOException e) {
-                throw new RuntimeException("Failed to save PDF report", e);
-            }
+            Files.createDirectories(filePath.getParent());
+            Files.write(filePath, pdfBytes);
 
             return ResponseEntity.ok()
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=quiz_report.pdf")
@@ -105,7 +96,6 @@ public class GameController {
         } else {
             return ResponseEntity.ok(entry);
         }
-    });
     }
 
 
