@@ -1,6 +1,7 @@
 package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.dto.RegisterRequest;
+import com.jakubroks.quiz.entity.LoggedUsersMap;
 import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.repository.UserRepository;
 import com.jakubroks.quiz.security.PasswordHasher;
@@ -21,12 +22,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
-    private final Map<String, User> loggedUsers;
+    private final LoggedUsersMap loggedUsersMap;
 
-    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, Map<String, User> loggedUsers) {
+    public UserService(UserRepository userRepository, PasswordHasher passwordHasher, LoggedUsersMap loggedUsersMap) {
         this.userRepository = userRepository;
         this.passwordHasher = passwordHasher;
-        this.loggedUsers = loggedUsers;
+        this.loggedUsersMap = loggedUsersMap;
     }
 
     public User register(RegisterRequest request) {
@@ -68,15 +69,19 @@ public class UserService {
         }
 
         String authKey = UUID.randomUUID().toString();
-        loggedUsers.put(authKey, user.get());
+        loggedUsersMap.addUser(authKey, user.get());
         return authKey;
     }
 
     public boolean logout(String key) {
-        return loggedUsers.remove(key) != null;
+        User existing = loggedUsersMap.getLoggedUsers().get(key);
+        if (existing == null) return false;
+
+        loggedUsersMap.removeUserByKey(key);
+        return true;
     }
 
     public Optional<User> getByKey(String key) {
-        return Optional.ofNullable(loggedUsers.get(key));
+        return Optional.ofNullable(loggedUsersMap.getLoggedUsers().get(key));
     }
 }
