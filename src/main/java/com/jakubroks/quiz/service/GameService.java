@@ -84,6 +84,12 @@ public class GameService {
         savedGameEntryRepository.save(entry);
     }
 
+    public QuizResultDTO getFinishedGame(String gameId) {
+        return savedGameEntryRepository.findById(gameId)
+                .map(SavedGameEntry::toQuizResultDTO)
+                .orElse(null);
+    }
+
 
 
 
