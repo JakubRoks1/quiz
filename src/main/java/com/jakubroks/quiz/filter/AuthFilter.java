@@ -11,57 +11,57 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import jakarta.servlet.Filter;
-    @Component
-    public class AuthFilter implements Filter {
+@Component
+public class AuthFilter implements Filter {
 
-        private final UserService userService;
+    private final UserService userService;
 
-        public AuthFilter(UserService userService) {
-            this.userService = userService;
+    public AuthFilter(UserService userService) {
+        this.userService = userService;
+    }
+
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpServletResponse res = (HttpServletResponse) response;
+
+        String path = req.getRequestURI();
+
+        if (path.startsWith("/auth") || path.startsWith("/register")) {
+            chain.doFilter(request, response);
+            return;
         }
 
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-                throws IOException, ServletException {
+        String key = req.getHeader("X-KEY");
 
-            HttpServletRequest req = (HttpServletRequest) request;
-            HttpServletResponse res = (HttpServletResponse) response;
+        if (key == null || key.isBlank()) {
+            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            res.getWriter().write("""
+                    {"message":"Missing X-KEY"}
+                    """);
+            return;
+        }
 
-            String path = req.getRequestURI();
+        userService.getByKey(key).ifPresentOrElse(user -> {
+            req.setAttribute("user", user);
 
-            if (path.startsWith("/auth") || path.startsWith("/public")) {
+            try {
                 chain.doFilter(request, response);
-                return;
+            } catch (IOException | ServletException e) {
+                throw new RuntimeException(e);
             }
 
-            String key = req.getHeader("X-KEY");
-
-            if (key == null || key.isBlank()) {
+        }, () -> {
+            try {
                 res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 res.getWriter().write("""
-                        {"message":"Missing X-KEY"}
-                        """);
-                return;
+    {"message":"Invalid or expired key"}
+    """);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
             }
-
-            userService.getByKey(key).ifPresentOrElse(user -> {
-                req.setAttribute("user", user);
-
-                try {
-                    chain.doFilter(request, response);
-                } catch (IOException | ServletException e) {
-                    throw new RuntimeException(e);
-                }
-
-            }, () -> {
-                try {
-                    res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    res.getWriter().write("""
-        {"message":"Invalid or expired key"}
-        """);
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-        }
+        });
     }
+}
 

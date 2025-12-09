@@ -6,14 +6,10 @@ import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.repository.UserRepository;
 import com.jakubroks.quiz.security.PasswordHasher;
 import jakarta.transaction.Transactional;
-import lombok.Data;
-import lombok.val;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -74,14 +70,10 @@ public class UserService {
     }
 
     public boolean logout(String key) {
-        User existing = loggedUsersMap.getLoggedUsers().get(key);
-        if (existing == null) return false;
-
-        loggedUsersMap.removeUserByKey(key);
-        return true;
+        return loggedUsersMap.removeUserByKey(key);
     }
 
     public Optional<User> getByKey(String key) {
-        return Optional.ofNullable(loggedUsersMap.getLoggedUsers().get(key));
+        return loggedUsersMap.getKeyToUser(key);
     }
 }

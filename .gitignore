@@ -3,8 +3,6 @@ target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-/data/
-/reports/
 
 ### STS ###
 .apt_generated
@@ -31,9 +29,15 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
+# VS Code
 .vscode/
-/data/
-/reports/
-/data/
+
+# Project-specific (custom)
+data/
+reports/
+
+# Databases
+*.mv.db
+*.lock.db
+
 

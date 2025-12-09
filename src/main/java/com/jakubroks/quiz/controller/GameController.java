@@ -29,7 +29,7 @@ import java.util.function.Function;
 
 @RestController
 @RequestMapping("/game")
-//@RequiredArgsConstructor
+@RequiredArgsConstructor
 public class GameController {
 
     private final GameService gameService;
@@ -40,14 +40,6 @@ public class GameController {
     private final SavedGameEntryRepository savedGameEntryRepository;
 
     private final AuthService authService;
-
-    public GameController(GameService gameService, ReportService reportService, SavedGameEntryRepository savedGameEntryRepository, UserService userService, AuthService authService) {
-        this.gameService = gameService;
-        this.reportService = reportService;
-        this.savedGameEntryRepository = savedGameEntryRepository;
-        this.userService = userService;
-        this.authService = authService;
-    }
 
     @PostMapping("/start")
     public ResponseEntity<?> startGame(
@@ -78,21 +70,7 @@ public class GameController {
 
             gameService.saveFinishedGame(result);
 
-            byte[] pdfBytes = reportService.generateReport(result);
-
-            SavedGameEntry s = new SavedGameEntry(result);
-            // tu trzeba javowo zserializowac obiekt
-            System.out.println(Arrays.toString(s.getQuizResult()));
-            System.out.println(s.toQuizResultDTO());
-
-            Path filePath = Path.of("reports", "quiz_report_" + result.id() + ".pdf");
-            Files.createDirectories(filePath.getParent());
-            Files.write(filePath, pdfBytes);
-
-            return ResponseEntity.ok()
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=quiz_report.pdf")
-                    .contentType(MediaType.APPLICATION_PDF)
-                    .body(pdfBytes);
+            return ResponseEntity.ok(result);
         } else {
             return ResponseEntity.ok(entry);
         }
