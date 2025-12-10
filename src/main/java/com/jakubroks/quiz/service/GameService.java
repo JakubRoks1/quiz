@@ -2,6 +2,7 @@ package com.jakubroks.quiz.service;
 
 import com.jakubroks.quiz.PendingGame;
 import com.jakubroks.quiz.dto.QuizResultDTO;
+import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entity.SavedGameEntry;
@@ -15,6 +16,8 @@ import com.jakubroks.quiz.input.GameInput;
 import com.jakubroks.quiz.repository.QuizRepository;
 import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import org.springframework.stereotype.Service;
+import java.util.stream.Collectors;
+
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -39,13 +42,30 @@ public class GameService {
         Quiz quiz = quizRepository.findByTitle(gameInput.quizName())
                 .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
 
+        List<Question> questions = new ArrayList<>(quiz.getQuestions());
+
+        Difficulty difficulty = gameInput.difficulty();
+
+        if (difficulty != null && difficulty != Difficulty.RANDOMIZED) {
+            questions = questions.stream()
+                    .filter(q -> q.getDifficulty() == difficulty)
+                    .collect(Collectors.toList());
+        }
+
+        if (gameInput.size() > questions.size()) {
+            throw new TooManyQuestionsRequestedException(
+                    "Requested more questions than available for difficulty " + difficulty
+            );
+        }
+
         if (gameInput.size() > quiz.getQuestions().size()) {
             throw new TooManyQuestionsRequestedException("Requested more questions than available in quiz");
         }
 
-        List<Question> questions = new ArrayList<>(quiz.getQuestions());
         Collections.shuffle(questions);
-        List<Question> selectedQuestions = questions.stream().limit(gameInput.size()).toList();
+        List<Question> selectedQuestions = questions.stream()
+                .limit(gameInput.size())
+                .toList();
 
         PendingGame pendingGame = new PendingGame(UUID.randomUUID(), quiz, selectedQuestions);
         userGames.put(userId, pendingGame);

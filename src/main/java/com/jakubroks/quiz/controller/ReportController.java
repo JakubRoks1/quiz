@@ -20,7 +20,7 @@ public class ReportController {
     private final GameService gameService;
     private final ReportService reportService;
 
-    @GetMapping
+    @GetMapping("/{gameId}")
     public ResponseEntity<byte[]> downloadReport(@PathVariable String gameId) {
         QuizResultDTO result = gameService.getFinishedGame(gameId);
         if (result == null) {
