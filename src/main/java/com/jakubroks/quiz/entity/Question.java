@@ -1,6 +1,8 @@
 package com.jakubroks.quiz.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +19,9 @@ public class Question {
 
     private String text;
     private String correctAnswer;
+
+    @Enumerated(EnumType.STRING)
+    private Difficulty difficulty;
     public Question() {}
 
     public Question(String text, String correctAnswer) {

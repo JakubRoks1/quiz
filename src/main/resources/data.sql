@@ -2,17 +2,17 @@ DELETE FROM quiz_questions;
 DELETE FROM quiz;
 DELETE FROM questions;
 
-INSERT INTO questions (id, text, correct_answer) VALUES
-                                                     (1, 'What is the capital of France?', 'Paris'),
-                                                     (2, 'Which continent is the Sahara Desert located on?', 'Africa'),
-                                                     (3, 'Which is the largest country in the world by area?', 'Russia'),
-                                                     (4, 'What is the longest river in the world?', 'Nile'),
-                                                     (5, 'Which ocean lies on the east coast of the United States?', 'Atlantic Ocean'),
-                                                     (6, 'Mount Everest is located in which mountain range?', 'Himalayas'),
-                                                     (7, 'What is the capital city of Australia?', 'Canberra'),
-                                                     (8, 'Which country has the most islands in the world?', 'Sweden'),
-                                                     (9, 'Which U.S. state is known as the ''Sunshine State''?', 'Florida'),
-                                                     (10, 'What is the smallest country in the world?', 'Vatican City');
+INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
+                                                                 (1, 'What is the capital of France?', 'Paris', 'EASY'),
+                                                                 (2, 'Which continent is the Sahara Desert located on?', 'Africa', 'EASY'),
+                                                                 (3, 'Which is the largest country in the world by area?', 'Russia', 'MEDIUM'),
+                                                                 (4, 'What is the longest river in the world?', 'Nile', 'MEDIUM'),
+                                                                 (5, 'Which ocean lies on the east coast of the United States?', 'Atlantic Ocean', 'EASY'),
+                                                                 (6, 'Mount Everest is located in which mountain range?', 'Himalayas', 'HARD'),
+                                                                 (7, 'What is the capital city of Australia?', 'Canberra', 'MEDIUM'),
+                                                                 (8, 'Which country has the most islands in the world?', 'Sweden', 'HARD'),
+                                                                 (9, 'Which U.S. state is known as the ''Sunshine State''?', 'Florida', 'EASY'),
+                                                                 (10, 'What is the smallest country in the world?', 'Vatican City', 'MEDIUM');
 
 INSERT INTO quiz (id, title) VALUES (1, 'Geography Quiz');
 

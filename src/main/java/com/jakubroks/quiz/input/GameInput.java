@@ -1,6 +1,8 @@
 package com.jakubroks.quiz.input;
 
-public record GameInput(String quizName, int size) {
+import com.jakubroks.quiz.entity.Difficulty;
+
+public record GameInput(String quizName, int size, Difficulty difficulty) {
 
 }
 
