@@ -4,5 +4,5 @@ public enum Difficulty {
     EASY,
     MEDIUM,
     HARD,
-    RANDOMIZED
+    MIXED
 }
