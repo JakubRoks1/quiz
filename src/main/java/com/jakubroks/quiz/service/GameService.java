@@ -46,7 +46,7 @@ public class GameService {
 
         Difficulty difficulty = gameInput.difficulty();
 
-        if (difficulty != null && difficulty != Difficulty.RANDOMIZED) {
+        if (difficulty != null && difficulty != Difficulty.MIXED) {
             questions = questions.stream()
                     .filter(q -> q.getDifficulty() == difficulty)
                     .collect(Collectors.toList());

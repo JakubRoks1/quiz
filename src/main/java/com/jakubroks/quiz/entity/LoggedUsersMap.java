@@ -28,7 +28,7 @@ public class LoggedUsersMap {
     }
 
     public boolean removeUserByKey(String key) {
-        val removedUser = keyToUser.remove(key);
+        User removedUser = keyToUser.remove(key);
 
         if (removedUser == null) {
             return false;
