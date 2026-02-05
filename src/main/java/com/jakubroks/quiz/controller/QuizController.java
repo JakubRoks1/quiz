@@ -2,11 +2,19 @@ package com.jakubroks.quiz.controller;
 
 import com.jakubroks.quiz.dto.QuizDTO;
 import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.picker.QuestionPicker;
 import com.jakubroks.quiz.service.AuthService;
 import com.jakubroks.quiz.service.QuizService;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import java.util.List;
 
 @RestController
@@ -15,11 +23,18 @@ public class QuizController {
 
     private final QuizService quizService;
     private final AuthService authService;
+    private final QuestionPicker questionPicker;
 
     @Autowired
-    public QuizController(QuizService quizService, AuthService authService) {
+    public QuizController(QuizService quizService, AuthService authService, QuestionPicker questionPicker) {
         this.quizService = quizService;
         this.authService = authService;
+        this.questionPicker = questionPicker;
+    }
+
+    @GetMapping("/test/{id}")
+    public void test(@PathVariable Long id) {
+        questionPicker.pick(quizService.getQuiz(id), 6);
     }
 
     @GetMapping("/{id}")

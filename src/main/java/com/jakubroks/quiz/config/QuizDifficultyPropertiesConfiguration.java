@@ -4,13 +4,15 @@ import com.jakubroks.quiz.entity.Difficulty;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+// to możesz wywalić czyli podmienić z QuizDifficultyPropertiesConfigurationNew (podmień logikę i zostaw nazwę)
+// przejrzyj kod programu bo wydaje mi się że nie możesz grać w quizy mixed (i wybierać poziomów pośrednich)
+// w nowej logice (tej z New) zrób tak że jak nie podamy defaultmix to żeby był pierwszy z konfiguracji z mixes
+// mozesz pomyslec o uproszeczniu parsedRatiosPerMix (*czyli dodanie wlasnej nowej klasy - czyli zeby nie bylo mapy w mapie)
 @Data
-@Component
 @ConfigurationProperties(prefix = "quiz.difficulty")
 public class QuizDifficultyPropertiesConfiguration {
 
@@ -22,9 +24,6 @@ public class QuizDifficultyPropertiesConfiguration {
         if (defaultMix == null || !mixes.containsKey(defaultMix)) {
             throw new IllegalStateException("Default quiz difficulty mix is not defined");
         }
-
-        String ratio = mixes.get(defaultMix);
-        parseRatio(ratio);
     }
 
     public Map<Difficulty, Integer> getDefaultMixAsWeights() {
