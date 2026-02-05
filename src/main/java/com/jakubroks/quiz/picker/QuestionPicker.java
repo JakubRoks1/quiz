@@ -1,11 +1,11 @@
 package com.jakubroks.quiz.picker;
 
 import com.jakubroks.quiz.calculator.DifficultyDistributionCalculator;
-import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfiguration;
+import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfigurationNew;
 import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
-import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -19,16 +19,16 @@ import java.util.stream.Collectors;
 public class QuestionPicker {
 
     private final DifficultyDistributionCalculator calculator;
-    private final QuizDifficultyPropertiesConfiguration properties;
+    private final QuizDifficultyPropertiesConfigurationNew properties;
 
-    public QuestionPicker(DifficultyDistributionCalculator calculator, QuizDifficultyPropertiesConfiguration properties) {
+    public QuestionPicker(DifficultyDistributionCalculator calculator, QuizDifficultyPropertiesConfigurationNew properties) {
         this.calculator = calculator;
         this.properties = properties;
     }
 
     public List<Question> pick(Quiz quiz, int size) {
 
-        Map<Difficulty, Integer> weights = properties.getDefaultMixAsWeights();
+        Map<Difficulty, Integer> weights = properties.getByMix("MIXED");
 
         Map<Difficulty, Integer> target = calculator.calculate(size, weights);
 
