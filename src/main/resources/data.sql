@@ -53,3 +53,40 @@ INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (2, 18),
                                                        (2, 19),
                                                        (2, 20);
+
+INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
+                                                                 (101, 'EASY', 'EASY', 'EASY'),
+                                                                 (102, 'EASY', 'EASY', 'EASY'),
+                                                                 (103, 'EASY', 'EASY', 'EASY'),
+                                                                 (104, 'EASY', 'EASY', 'EASY'),
+                                                                 (105, 'EASY', 'EASY', 'EASY'),
+                                                                 (106, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (107, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (108, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (109, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (110, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (111, 'HARD', 'HARD', 'HARD'),
+                                                                 (112, 'HARD', 'HARD', 'HARD'),
+                                                                 (113, 'HARD', 'HARD', 'HARD'),
+                                                                 (114, 'HARD', 'HARD', 'HARD'),
+                                                                 (115, 'HARD', 'HARD', 'HARD');
+
+
+INSERT INTO quiz (id, title) VALUES (3, 'Difficulty Test Quiz');
+
+INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
+                                                       (3, 101),
+                                                       (3, 102),
+                                                       (3, 103),
+                                                       (3, 104),
+                                                       (3, 105),
+                                                       (3, 106),
+                                                       (3, 107),
+                                                       (3, 108),
+                                                       (3, 109),
+                                                       (3, 110),
+                                                       (3, 111),
+                                                       (3, 112),
+                                                       (3, 113),
+                                                       (3, 114),
+                                                       (3, 115);

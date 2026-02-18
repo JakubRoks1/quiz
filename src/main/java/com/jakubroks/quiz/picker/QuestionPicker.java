@@ -1,7 +1,7 @@
 package com.jakubroks.quiz.picker;
 
 import com.jakubroks.quiz.calculator.DifficultyDistributionCalculator;
-import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfigurationNew;
+import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfiguration;
 import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class QuestionPicker {
 
     private final DifficultyDistributionCalculator calculator;
-    private final QuizDifficultyPropertiesConfigurationNew properties;
+    private final QuizDifficultyPropertiesConfiguration properties;
 
-    public QuestionPicker(DifficultyDistributionCalculator calculator, QuizDifficultyPropertiesConfigurationNew properties) {
+    public QuestionPicker(DifficultyDistributionCalculator calculator, QuizDifficultyPropertiesConfiguration properties) {
         this.calculator = calculator;
         this.properties = properties;
     }
