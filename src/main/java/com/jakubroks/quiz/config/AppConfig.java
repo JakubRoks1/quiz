@@ -4,6 +4,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableConfigurationProperties({QuizDifficultyPropertiesConfiguration.class, QuizDifficultyPropertiesConfigurationNew.class})
+@EnableConfigurationProperties({QuizDifficultyPropertiesConfiguration.class, QuizDifficultyPropertiesConfiguration.class})
 public class AppConfig {
 }
