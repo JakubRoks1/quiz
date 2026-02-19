@@ -26,9 +26,9 @@ public class QuestionPicker {
         this.properties = properties;
     }
 
-    public List<Question> pick(Quiz quiz, int size) {
+    public List<Question> pick(Quiz quiz, int size, String mixName) {
 
-        Map<Difficulty, Integer> weights = properties.getByMix("MIXED");
+        Map<Difficulty, Integer> weights = properties.getByMix(mixName); //// tutaj
 
         Map<Difficulty, Integer> target = calculator.calculate(size, weights);
 

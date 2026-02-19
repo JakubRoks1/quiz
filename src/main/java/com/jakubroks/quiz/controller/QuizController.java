@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -33,8 +34,8 @@ public class QuizController {
     }
 
     @GetMapping("/test/{id}")
-    public void test(@PathVariable Long id) {
-        questionPicker.pick(quizService.getQuiz(id), 6);
+    public void test(@PathVariable Long id, @RequestParam int size, @RequestParam String name) {
+        questionPicker.pick(quizService.getQuiz(id), size, name);
     }
 
     @GetMapping("/{id}")

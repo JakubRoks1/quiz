@@ -1,7 +1,6 @@
 package com.jakubroks.quiz.config;
 
 import com.jakubroks.quiz.entity.Difficulty;
-import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.val;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,10 +10,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-// to możesz wywalić czyli podmienić z QuizDifficultyPropertiesConfigurationNew (podmień logikę i zostaw nazwę) [x]
-// przejrzyj kod programu bo wydaje mi się że nie możesz grać w quizy mixed (i wybierać poziomów pośrednich)
-// w nowej logice (tej z New) zrób tak że jak nie podamy defaultmix to żeby był pierwszy z konfiguracji z mixes [x]
-// mozesz pomyslec o uproszeczniu parsedRatiosPerMix (*czyli dodanie wlasnej nowej klasy - czyli zeby nie bylo mapy w mapie) [x]
+// 1) Dopisał testy do QuestionPicker
+// 2) Przygotował QuestionPicker do obsługi dynamicznej poziomów - zmiana w serwisie, - popraw zmienne na ładne nazwy
+// miałeś zahardocowany poziom - ja to poprawiłem do zmiennej, ale brakuje obsługi że
+// jak użytkownik chce zagrać w poziom mixed (ale nie poda jaki mix) to idzie default
+// 3) randomowe rozdzielanie
+// 4) wystaw endpoint (docelowy)
+
 @Data
 @ConfigurationProperties(prefix = "quiz.difficulty")
 public class QuizDifficultyPropertiesConfiguration {
@@ -26,7 +28,7 @@ public class QuizDifficultyPropertiesConfiguration {
 
     @ConstructorBinding
     public QuizDifficultyPropertiesConfiguration(Map<String, String> mixes,
-                                                    String defaultMix) {
+                                                     String defaultMix) {
 
         if (mixes == null || mixes.isEmpty()) {
             throw new IllegalStateException("No quiz difficulty mixes defined");
@@ -34,11 +36,7 @@ public class QuizDifficultyPropertiesConfiguration {
 
         this.mixes = Collections.unmodifiableMap(mixes);
 
-        String resolvedDefaultMix = defaultMix;
-        if (resolvedDefaultMix == null || resolvedDefaultMix.isBlank() ||  !mixes.containsKey(resolvedDefaultMix)) {
-            resolvedDefaultMix = mixes.keySet().iterator().next();
-        }
-        this.defaultMix = resolvedDefaultMix;
+        this.defaultMix = mixes.containsKey(defaultMix) ? defaultMix : mixes.keySet().iterator().next();
 
         val ratios = new HashMap<String, DifficultyMix>();
         for (var entry : mixes.entrySet()) {
@@ -46,15 +44,6 @@ public class QuizDifficultyPropertiesConfiguration {
             ratios.put(entry.getKey(), result);
         }
         this.parsedRatiosPerMix = Collections.unmodifiableMap(ratios);
-
-
-
-        System.out.println("xxxxxx");
-        System.out.println(mixes);
-        System.out.println(this.defaultMix);
-        System.out.println(ratios);
-        System.out.println("xxxxxx");
-
     }
 
     public Map<Difficulty, Integer> getByMix(String mixName) {
