@@ -5,6 +5,7 @@ import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfiguration;
 import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.exception.QuestionsNotFoundException;
 import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import org.springframework.stereotype.Service;
 
@@ -18,43 +19,47 @@ import java.util.stream.Collectors;
 @Service
 public class QuestionPicker {
 
-    private final DifficultyDistributionCalculator calculator;
-    private final QuizDifficultyPropertiesConfiguration properties;
+    private final DifficultyDistributionCalculator distributionCalculator;
+    private final QuizDifficultyPropertiesConfiguration difficultyProperties;
 
-    public QuestionPicker(DifficultyDistributionCalculator calculator, QuizDifficultyPropertiesConfiguration properties) {
-        this.calculator = calculator;
-        this.properties = properties;
+    public QuestionPicker(DifficultyDistributionCalculator distributionCalculator, QuizDifficultyPropertiesConfiguration difficultyProperties) {
+        this.distributionCalculator = distributionCalculator;
+        this.difficultyProperties = difficultyProperties;
     }
 
-    public List<Question> pick(Quiz quiz, int size, String mixName) {
+    public List<Question> pick(Quiz quiz, int numberOfQuestions, String mixName) {
 
-        Map<Difficulty, Integer> weights = properties.getByMix(mixName); //// tutaj
+        if (quiz.getQuestions() == null || quiz.getQuestions().isEmpty()) {
+            throw new QuestionsNotFoundException();
+        }
 
-        Map<Difficulty, Integer> target = calculator.calculate(size, weights);
+        Map<Difficulty, Integer> difficultyWeights = difficultyProperties.getByMix(mixName); // tutaj
 
-        Map<Difficulty, List<Question>> pool = quiz.getQuestions().stream()
+        Map<Difficulty, Integer> targetCountsByDifficulty = distributionCalculator.calculate(numberOfQuestions, difficultyWeights);
+
+        Map<Difficulty, List<Question>> questionsByDifficulty = quiz.getQuestions().stream()
                     .collect(Collectors.groupingBy(Question::getDifficulty));
 
-        List<Question> result = new ArrayList<>(size);
+        List<Question> selectedQuestions = new ArrayList<>(numberOfQuestions);
 
-        for (var entry : target.entrySet()) {
+        for (var entry : targetCountsByDifficulty.entrySet()) {
             Difficulty diff = entry.getKey();
-            int count = entry.getValue();
+            int requiredCount = entry.getValue();
 
-            List<Question> questions = new ArrayList<>(pool.getOrDefault(diff, List.of()));
+            List<Question> questions = new ArrayList<>(questionsByDifficulty.getOrDefault(diff, List.of()));
 
-            if (questions.size() < count) {
+            if (questions.size() < requiredCount) {
                 throw new TooManyQuestionsRequestedException(
                         "Not enough questions for difficulty " + diff
                 );
             }
 
             Collections.shuffle(questions);
-            result.addAll(questions.stream().limit(count).toList());
+            selectedQuestions.addAll(questions.stream().limit(requiredCount).toList());
         }
 
-        Collections.shuffle(result);
-        return result;
+        Collections.shuffle(selectedQuestions);
+        return selectedQuestions;
     }
 
 }

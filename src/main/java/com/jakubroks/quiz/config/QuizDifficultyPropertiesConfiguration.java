@@ -10,11 +10,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-// 1) Dopisał testy do QuestionPicker
+// 1) Dopisał testy do QuestionPicker [x]
 // 2) Przygotował QuestionPicker do obsługi dynamicznej poziomów - zmiana w serwisie, - popraw zmienne na ładne nazwy
 // miałeś zahardocowany poziom - ja to poprawiłem do zmiennej, ale brakuje obsługi że
 // jak użytkownik chce zagrać w poziom mixed (ale nie poda jaki mix) to idzie default
-// 3) randomowe rozdzielanie
+// 3) randomowe rozdzielanie sprawdzic (przypadek 1:1:1 - 4 pytania) jak nie przydzielone pytania to randomowo dorzuc dowolnie [x]
 // 4) wystaw endpoint (docelowy)
 
 @Data
