@@ -22,4 +22,18 @@ public class DifficultyDistributionCalculator {
         // sprawdzic (przypadek 1:1:1 - 4 pytania) jak nie przydzielone pytania to randomowo dorzuc dowolnie
 
     }
+
+    public Map<Difficulty, Integer> calculate2(int total, Map<Difficulty, Integer> weights) {
+
+        int weightSum = weights.values().stream().mapToInt(Integer::intValue).sum();
+
+        return weights.entrySet().stream()
+            .map(entry -> {
+                double value = (double) total * entry.getValue() / weightSum;
+                return Map.entry(entry.getKey(), (int) Math.round(value));
+            }).collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        // sprawdzic (przypadek 1:1:1 - 4 pytania) jak nie przydzielone pytania to randomowo dorzuc dowolnie
+
+    }
 }

@@ -1,5 +1,6 @@
 package com.jakubroks.quiz.service;
 
+import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.entry.GameEntry;
@@ -40,7 +41,7 @@ class GameServiceTest {
     void givenNonExistingQuiz_whenStartGame_thenShouldThrowQuizNotFoundException() {
         String userId = "user3";
         when(quizRepository.findByTitle("Geography")).thenReturn(Optional.empty());
-        GameInput input = new GameInput("Geography", 1);
+        GameInput input = new GameInput("Geography", 1, Difficulty.EASY);
 
         assertThatThrownBy(() -> gameService.startGame(userId, input))
                 .isInstanceOf(QuizNotFoundException.class)
@@ -59,7 +60,7 @@ class GameServiceTest {
     @Test
     void givenTooManyQuestionsRequested_whenStartGame_thenShouldThrowTooManyQuestionsRequestedException() {
         String userId = "user3";
-        GameInput input = new GameInput("quiz", 5);
+        GameInput input = new GameInput("quiz", 5, Difficulty.EASY);
 
         Quiz quiz = new Quiz();
         quiz.setQuestions(Set.of(new Question(), new Question())); // only 2 questions
@@ -73,7 +74,7 @@ class GameServiceTest {
     @Test
     void givenValidQuizAndUser_whenStartGame_thenShouldStartGameSuccessfully() {
         String userId = "user4";
-        GameInput input = new GameInput("quiz", 2);
+        GameInput input = new GameInput("quiz", 2, Difficulty.EASY);
 
         Question q1 = new Question();
         q1.setText("First?");
@@ -93,7 +94,7 @@ class GameServiceTest {
     @Test
     void givenGameAlreadyStartedForUser_whenStartGame_thenShouldThrowGameAlreadyStartedException() {
         String userId = "user1";
-        GameInput input = new GameInput("quiz1", 1);
+        GameInput input = new GameInput("quiz1", 1, Difficulty.EASY);
 
         Quiz quiz = new Quiz();
         quiz.setQuestions(Set.of(new Question()));

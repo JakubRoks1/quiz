@@ -28,7 +28,7 @@ public class QuizDifficultyPropertiesConfiguration {
 
     @ConstructorBinding
     public QuizDifficultyPropertiesConfiguration(Map<String, String> mixes,
-                                                     String defaultMix) {
+                                                 String defaultMix) {
 
         if (mixes == null || mixes.isEmpty()) {
             throw new IllegalStateException("No quiz difficulty mixes defined");
