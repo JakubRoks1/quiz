@@ -1,6 +1,8 @@
 package com.jakubroks.quiz.calculator;
 
 import com.jakubroks.quiz.entity.Difficulty;
+import jakarta.annotation.PostConstruct;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import java.util.EnumMap;
@@ -9,7 +11,15 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Component
-public class DifficultyDistributionCalculator {
+//@Primary
+@ConditionalOnProperty(name = "calculator.type")
+//@Order(900)
+public class DifficultyDistributionCalculator implements DistributionCalculator {
+
+    @PostConstruct
+    public void a() {
+        System.out.println("Calculator 1");
+    }
 
     public Map<Difficulty, Integer> calculate(int total, Map<Difficulty, Integer> weights) {
 
