@@ -1,6 +1,6 @@
 package com.jakubroks.quiz.picker;
 
-import com.jakubroks.quiz.calculator.DifficultyDistributionCalculator;
+import com.jakubroks.quiz.calculator.DistributionCalculator;
 import com.jakubroks.quiz.config.QuizDifficultyPropertiesConfiguration;
 import com.jakubroks.quiz.entity.Difficulty;
 import com.jakubroks.quiz.entity.Question;
@@ -9,7 +9,8 @@ import com.jakubroks.quiz.exception.QuestionsNotFoundException;
 import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
@@ -19,7 +20,7 @@ import java.util.Map;
 import static com.jakubroks.quiz.entity.Difficulty.EASY;
 import static com.jakubroks.quiz.entity.Difficulty.MEDIUM;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +28,7 @@ import static org.mockito.Mockito.when;
 class QuestionPickerTest {
 
     @Mock
-    DifficultyDistributionCalculator calculator;
+    DistributionCalculator calculator;
     @Mock
     QuizDifficultyPropertiesConfiguration properties;
 
