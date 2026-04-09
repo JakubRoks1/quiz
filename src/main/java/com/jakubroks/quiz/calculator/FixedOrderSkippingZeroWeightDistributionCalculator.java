@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Component
 @ConditionalOnProperty(name = "calculator.type", havingValue = "fixed-order-skip-zero")
-public class FixedOrderSkippingZeroWeightDistributionCalculator extends AbstractDistributionClass {
+class FixedOrderSkippingZeroWeightDistributionCalculator extends DistributionCalculator {
 
     @Override
     public Map<Difficulty, Integer> calculate(int total, Map<Difficulty, Integer> weights) {
