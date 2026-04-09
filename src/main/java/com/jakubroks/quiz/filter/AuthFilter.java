@@ -1,6 +1,7 @@
 package com.jakubroks.quiz.filter;
 
 import com.jakubroks.quiz.service.UserService;
+import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
@@ -10,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import jakarta.servlet.Filter;
 @Component
 public class AuthFilter implements Filter {
 
@@ -28,7 +28,11 @@ public class AuthFilter implements Filter {
 
         String path = req.getRequestURI();
 
-        if (path.startsWith("/auth") || path.startsWith("/register")) {
+        if (path.startsWith("/auth")
+            || path.startsWith("/register")
+            || path.startsWith("/v3/api-docs")
+            || path.startsWith("/swagger-ui")
+        ) {
             chain.doFilter(request, response);
             return;
         }

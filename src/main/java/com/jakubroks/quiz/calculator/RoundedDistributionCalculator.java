@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 @Component
 @ConditionalOnProperty(name = "calculator.type", havingValue = "rounded")
-public class RoundedDistributionCalculator extends AbstractDistributionClass {
+class RoundedDistributionCalculator extends DistributionCalculator {
 
     @Override
     public Map<Difficulty, Integer> calculate(int total, Map<Difficulty, Integer> weights) {

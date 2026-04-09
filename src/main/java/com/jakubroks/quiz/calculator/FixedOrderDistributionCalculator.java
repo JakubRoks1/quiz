@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Component
 @ConditionalOnProperty(name = "calculator.type", havingValue = "fixed-order")
-public class FixedOrderDistributionCalculator extends AbstractDistributionClass {
+class FixedOrderDistributionCalculator extends DistributionCalculator {
     @Override
     public Map<Difficulty, Integer> calculate(int total, Map<Difficulty, Integer> weights) {
         validateTotal(total);
