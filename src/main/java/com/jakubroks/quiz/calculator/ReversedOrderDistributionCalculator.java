@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Component
 @ConditionalOnProperty(name = "calculator.type", havingValue = "reversed-order")
-public class ReversedOrderDistributionCalculator extends AbstractDistributionClass {
+class ReversedOrderDistributionCalculator extends DistributionCalculator {
 
     @Override
     public Map<Difficulty, Integer> calculate(int total, Map<Difficulty, Integer> weights) {
