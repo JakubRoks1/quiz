@@ -55,38 +55,40 @@ INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (2, 20);
 
 INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
-                                                                 (101, 'EASY', 'EASY', 'EASY'),
-                                                                 (102, 'EASY', 'EASY', 'EASY'),
-                                                                 (103, 'EASY', 'EASY', 'EASY'),
-                                                                 (104, 'EASY', 'EASY', 'EASY'),
-                                                                 (105, 'EASY', 'EASY', 'EASY'),
-                                                                 (106, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
-                                                                 (107, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
-                                                                 (108, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
-                                                                 (109, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
-                                                                 (110, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
-                                                                 (111, 'HARD', 'HARD', 'HARD'),
-                                                                 (112, 'HARD', 'HARD', 'HARD'),
-                                                                 (113, 'HARD', 'HARD', 'HARD'),
-                                                                 (114, 'HARD', 'HARD', 'HARD'),
-                                                                 (115, 'HARD', 'HARD', 'HARD');
+                                                                 (21, 'EASY', 'EASY', 'EASY'),
+                                                                 (22, 'EASY', 'EASY', 'EASY'),
+                                                                 (23, 'EASY', 'EASY', 'EASY'),
+                                                                 (24, 'EASY', 'EASY', 'EASY'),
+                                                                 (25, 'EASY', 'EASY', 'EASY'),
+                                                                 (26, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (27, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (28, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (29, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (30, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (31, 'HARD', 'HARD', 'HARD'),
+                                                                 (32, 'HARD', 'HARD', 'HARD'),
+                                                                 (33, 'HARD', 'HARD', 'HARD'),
+                                                                 (34, 'HARD', 'HARD', 'HARD'),
+                                                                 (35, 'HARD', 'HARD', 'HARD');
 
 
 INSERT INTO quiz (id, title) VALUES (3, 'Difficulty Test Quiz');
 
 INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
-                                                       (3, 101),
-                                                       (3, 102),
-                                                       (3, 103),
-                                                       (3, 104),
-                                                       (3, 105),
-                                                       (3, 106),
-                                                       (3, 107),
-                                                       (3, 108),
-                                                       (3, 109),
-                                                       (3, 110),
-                                                       (3, 111),
-                                                       (3, 112),
-                                                       (3, 113),
-                                                       (3, 114),
-                                                       (3, 115);
+                                                       (3, 21),
+                                                       (3, 22),
+                                                       (3, 23),
+                                                       (3, 24),
+                                                       (3, 25),
+                                                       (3, 26),
+                                                       (3, 27),
+                                                       (3, 28),
+                                                       (3, 29),
+                                                       (3, 30),
+                                                       (3, 31),
+                                                       (3, 32),
+                                                       (3, 33),
+                                                       (3, 34),
+                                                       (3, 35);
+
+ALTER TABLE questions ALTER COLUMN id RESTART WITH 36;
