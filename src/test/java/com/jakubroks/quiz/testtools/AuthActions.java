@@ -9,13 +9,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClient;
 
 class AuthActions extends ActionsSupport {
 
-    private final RestClient restClient = RestClient.builder()
-            .baseUrl("http://localhost:8080")
-            .build();
+
+
 
     @Test
     void givenUniqueUser_whenRegistering_thenReturnsCreatedUser() {

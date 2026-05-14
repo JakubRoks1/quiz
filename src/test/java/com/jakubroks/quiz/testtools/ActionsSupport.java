@@ -10,8 +10,10 @@ import org.springframework.web.client.RestClient;
 
 public class ActionsSupport {
 
+    private static final String URL = "http://localhost:8080";
+
     protected final RestClient restClient = RestClient.builder()
-            .baseUrl("http://localhost:8080")
+            .baseUrl(URL)
             .build();
 
     protected String registerAndLogin() {

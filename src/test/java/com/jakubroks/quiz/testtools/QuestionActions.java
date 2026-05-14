@@ -1,21 +1,12 @@
 package com.jakubroks.quiz.testtools;
 
-import com.jakubroks.quiz.dto.AuthKey;
-import com.jakubroks.quiz.dto.LoginRequest;
-import com.jakubroks.quiz.dto.RegisterRequest;
 import com.jakubroks.quiz.entity.Question;
-import com.jakubroks.quiz.entity.User;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestClient;
 
 public class QuestionActions extends ActionsSupport {
-
-    private final RestClient restClient = RestClient.builder()
-            .baseUrl("http://localhost:8080")
-            .build();
 
     @Test
     void givenQuestion_whenAdding_thenReturnsCreatedQuestion() {
