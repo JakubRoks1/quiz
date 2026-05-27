@@ -3,7 +3,9 @@ package com.jakubroks.quiz.testtools;
 import com.jakubroks.quiz.controller.QuizController;
 import com.jakubroks.quiz.dto.AuthKey;
 import com.jakubroks.quiz.dto.LoginRequest;
+import com.jakubroks.quiz.dto.QuestionDTO;
 import com.jakubroks.quiz.dto.RegisterRequest;
+import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.model.Quiz;
 import org.springframework.http.MediaType;
@@ -48,5 +50,51 @@ public class AppRestClient {
 
     public ResponseEntity<Quiz> createQuiz(String authKey, String title) {
         return executePost("/quizzes", new QuizController.QuizDto(null, title), Quiz.class, authKey);
+    }
+
+    public ResponseEntity<Quiz> updateQuiz(String xKey, Long quizId, String title) {
+        return restClient.put()
+            .uri("/quizzes/" + quizId)
+            .header("X-KEY", xKey)
+            .contentType(MediaType.APPLICATION_JSON)
+            .body(new QuizController.QuizDto(quizId, title))
+            .retrieve()
+            .toEntity(Quiz.class);
+    }
+
+    public ResponseEntity<Question> createQuestion(String xKey, String text, String correctAnswer) {
+        return restClient.post()
+                .uri("/questions")
+                .header("X-KEY", xKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new QuestionDTO(text, correctAnswer))
+                .retrieve()
+                .toEntity(Question.class);
+    }
+
+    public ResponseEntity<Question> updateQuestion(String xKey, Long questionId, String text, String correctAnswer) {
+        return restClient.put()
+                .uri("/questions/" + questionId)
+                .header("X-KEY", xKey)
+                .contentType(MediaType.APPLICATION_JSON)
+                .body(new QuestionDTO(text, correctAnswer))
+                .retrieve()
+                .toEntity(Question.class);
+    }
+
+    public ResponseEntity<Quiz> deleteQuiz(String xKey, Long quizId) {
+        return restClient.delete()
+                .uri("/quizzes/" + quizId)
+                .header("X-KEY", xKey)
+                .retrieve()
+                .toEntity(Quiz.class);
+    }
+
+    public ResponseEntity<Void> deleteQuestion(String xKey, Long questionId) {
+        return restClient.delete()
+                .uri("/questions/" + questionId)
+                .header("X-KEY", xKey)
+                .retrieve()
+                .toEntity(Void.class);
     }
 }
