@@ -14,7 +14,7 @@ INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
                                                                  (9, 'Which U.S. state is known as the ''Sunshine State''?', 'Florida', 'EASY'),
                                                                  (10, 'What is the smallest country in the world?', 'Vatican City', 'MEDIUM');
 
-INSERT INTO quiz (id, title) VALUES (1, 'Geography Quiz');
+INSERT INTO quiz (id, title) VALUES (1, 'Geography');
 
 INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (1, 1),
@@ -28,19 +28,19 @@ INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (1, 9),
                                                        (1, 10);
 
-INSERT INTO questions (id, text, correct_answer) VALUES
-                                                     (11, 'What planet is known as the Red Planet?', 'Mars'),
-                                                     (12, 'What is the chemical symbol for water?', 'H2O'),
-                                                     (13, 'What gas do plants absorb from the atmosphere?', 'Carbon dioxide'),
-                                                     (14, 'How many bones are in the adult human body?', '206'),
-                                                     (15, 'What force keeps us on the ground?', 'Gravity'),
-                                                     (16, 'What is the largest organ in the human body?', 'Skin'),
-                                                     (17, 'What particle carries a negative charge?', 'Electron'),
-                                                     (18, 'Who developed the theory of relativity?', 'Albert Einstein'),
-                                                     (19, 'What is the boiling point of water at sea level in Celsius?', '100'),
-                                                     (20, 'What is the process by which plants make their food?', 'Photosynthesis');
+INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
+                                                                 (11, 'What planet is known as the Red Planet?', 'Mars', 'EASY'),
+                                                                 (12, 'What is the chemical symbol for water?', 'H2O', 'EASY'),
+                                                                 (13, 'What gas do plants absorb from the atmosphere?', 'Carbon dioxide', 'EASY'),
+                                                                 (14, 'How many bones are in the adult human body?', '206', 'MEDIUM'),
+                                                                 (15, 'What force keeps us on the ground?', 'Gravity', 'EASY'),
+                                                                 (16, 'What is the largest organ in the human body?', 'Skin', 'MEDIUM'),
+                                                                 (17, 'What particle carries a negative charge?', 'Electron', 'MEDIUM'),
+                                                                 (18, 'Who developed the theory of relativity?', 'Albert Einstein', 'EASY'),
+                                                                 (19, 'What is the boiling point of water at sea level in Celsius?', '100', 'EASY'),
+                                                                 (20, 'What is the process by which plants make their food?', 'Photosynthesis', 'MEDIUM');
 
-INSERT INTO quiz (id, title) VALUES (2, 'Science Quiz');
+INSERT INTO quiz (id, title) VALUES (2, 'Science');
 
 INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (2, 11),
@@ -72,7 +72,7 @@ INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
                                                                  (35, 'HARD', 'HARD', 'HARD');
 
 
-INSERT INTO quiz (id, title) VALUES (3, 'Difficulty Test Quiz');
+INSERT INTO quiz (id, title) VALUES (3, 'Difficulty');
 
 INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (3, 21),
@@ -91,4 +91,41 @@ INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
                                                        (3, 34),
                                                        (3, 35);
 
-ALTER TABLE questions ALTER COLUMN id RESTART WITH 36;
+INSERT INTO questions (id, text, correct_answer, difficulty) VALUES
+                                                                 (36, 'EASY', 'EASY', 'EASY'),
+                                                                 (37, 'EASY', 'EASY', 'EASY'),
+                                                                 (38, 'EASY', 'EASY', 'EASY'),
+                                                                 (39, 'EASY', 'EASY', 'EASY'),
+                                                                 (40, 'EASY', 'EASY', 'EASY'),
+                                                                 (41, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (42, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (43, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (44, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (45, 'MEDIUM', 'MEDIUM', 'MEDIUM'),
+                                                                 (46, 'HARD', 'HARD', 'HARD'),
+                                                                 (47, 'HARD', 'HARD', 'HARD'),
+                                                                 (48, 'HARD', 'HARD', 'HARD'),
+                                                                 (49, 'HARD', 'HARD', 'HARD'),
+                                                                 (50, 'HARD', 'HARD', 'HARD');
+
+
+INSERT INTO quiz (id, title) VALUES (4, 'Quiz');
+
+INSERT INTO quiz_questions (quiz_id, questions_id) VALUES
+                                                       (4, 36),
+                                                       (4, 37),
+                                                       (4, 38),
+                                                       (4, 39),
+                                                       (4, 40),
+                                                       (4, 41),
+                                                       (4, 42),
+                                                       (4, 43),
+                                                       (4, 44),
+                                                       (4, 45),
+                                                       (4, 46),
+                                                       (4, 47),
+                                                       (4, 48),
+                                                       (4, 49),
+                                                       (4, 50);
+
+ALTER TABLE questions ALTER COLUMN id RESTART WITH 51;

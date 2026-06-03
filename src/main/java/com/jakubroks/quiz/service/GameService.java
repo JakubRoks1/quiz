@@ -9,7 +9,6 @@ import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.exception.GameAlreadyStartedException;
 import com.jakubroks.quiz.exception.GameNotFoundException;
-import com.jakubroks.quiz.exception.QuizNotFoundException;
 import com.jakubroks.quiz.exception.TooManyQuestionsRequestedException;
 import com.jakubroks.quiz.input.AnswerInput;
 import com.jakubroks.quiz.input.GameInput;
@@ -28,10 +27,12 @@ public class GameService {
     private final Map<String, PendingGame> userGames = new ConcurrentHashMap<>();
     private final QuizRepository quizRepository;
     private final SavedGameEntryRepository savedGameEntryRepository;
+    private final QuizCacheService quizCacheService;
 
-    public GameService(QuizRepository quizRepository, SavedGameEntryRepository savedGameEntryRepository) {
+    public GameService(QuizRepository quizRepository, SavedGameEntryRepository savedGameEntryRepository, QuizCacheService quizCacheService) {
         this.quizRepository = quizRepository;
         this.savedGameEntryRepository = savedGameEntryRepository;
+        this.quizCacheService = quizCacheService;
     }
 
     public GameEntry startGame(String userId, GameInput gameInput) {
@@ -39,8 +40,7 @@ public class GameService {
             throw new GameAlreadyStartedException("Game already started for this user");
         }
 
-        Quiz quiz = quizRepository.findByTitle(gameInput.quizName())
-                .orElseThrow(() -> new QuizNotFoundException("Quiz not found"));
+        Quiz quiz = quizCacheService.getQuizForGame(gameInput.quizName());
 
         List<Question> questions = new ArrayList<>(quiz.getQuestions());
 
