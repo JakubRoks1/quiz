@@ -30,11 +30,14 @@ class GameServiceTest {
 
     private SavedGameEntryRepository savedGameEntryRepository;
 
+    private QuizCacheService quizCacheService;
+
     @BeforeEach
     void setUp() {
         quizRepository = mock(QuizRepository.class);
         savedGameEntryRepository = mock(SavedGameEntryRepository.class);
-        gameService = new GameService(quizRepository, savedGameEntryRepository);
+        quizCacheService = mock(QuizCacheService.class);
+        gameService = new GameService(quizRepository, savedGameEntryRepository,quizCacheService);
     }
 
     @Test
