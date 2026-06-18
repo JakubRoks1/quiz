@@ -1,10 +1,16 @@
 package com.jakubroks.quiz.service;
 
+import com.github.benmanes.caffeine.cache.Cache;
+import org.awaitility.Awaitility;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -31,17 +37,20 @@ class QuizCacheServiceTest {
     }
 
     @Test
-    void givenMoreThanThreeQuizzes_whenGetQuizForGame_thenShouldNotStoreMoreThanThreeQuizzes() {
+    void givenMoreThanThreeQuizzes_whenGetQuizForGame_thenShouldNotStoreMoreThanThreeQuizzes() throws InterruptedException {
         quizCacheService.getQuizForGame("Science");
         quizCacheService.getQuizForGame("Geography");
         quizCacheService.getQuizForGame("Difficulty");
         quizCacheService.getQuizForGame("Quiz");
 
-        com.github.benmanes.caffeine.cache.Cache<Object, Object> nativeCache =
-                (com.github.benmanes.caffeine.cache.Cache<Object, Object>)
+        Cache<Object, Object> nativeCache =
+                (Cache<Object, Object>)
                         cacheManager.getCache("cache").getNativeCache();
 
-        nativeCache.cleanUp();
+        Awaitility.await().atMost(4, TimeUnit.SECONDS)
+            .pollInterval(500, TimeUnit.MILLISECONDS)
+            .until(() -> nativeCache.asMap().size() <= 3);
+//        nativeCache.cleanUp();
 
         assertTrue(nativeCache.asMap().size() <= 3);
     }
