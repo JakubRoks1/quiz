@@ -15,7 +15,6 @@ import com.jakubroks.quiz.repository.SavedGameEntryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -43,8 +42,10 @@ class GameServiceTest {
     @Test
     void givenNonExistingQuiz_whenStartGame_thenShouldThrowQuizNotFoundException() {
         String userId = "user3";
-        when(quizRepository.findByTitle("Geography")).thenReturn(Optional.empty());
         GameInput input = new GameInput("Geography", 1, Difficulty.EASY);
+
+        when(quizCacheService.getQuizForGame("Geography"))
+                .thenThrow(new QuizNotFoundException("Quiz not found"));
 
         assertThatThrownBy(() -> gameService.startGame(userId, input))
                 .isInstanceOf(QuizNotFoundException.class)
@@ -65,10 +66,19 @@ class GameServiceTest {
         String userId = "user3";
         GameInput input = new GameInput("quiz", 5, Difficulty.EASY);
 
-        Quiz quiz = new Quiz();
-        quiz.setQuestions(Set.of(new Question(), new Question())); // only 2 questions
+        Question q1 = new Question();
+        q1.setText("First?");
+        q1.setDifficulty(Difficulty.EASY);
 
-        when(quizRepository.findByTitle("quiz")).thenReturn(Optional.of(quiz));
+        Question q2 = new Question();
+        q2.setText("Second?");
+        q2.setDifficulty(Difficulty.EASY);
+
+        Quiz quiz = new Quiz();
+        quiz.setTitle("quiz");
+        quiz.setQuestions(Set.of(q1, q2));
+
+        when(quizCacheService.getQuizForGame("quiz")).thenReturn(quiz);
 
         assertThatThrownBy(() -> gameService.startGame(userId, input))
                 .isInstanceOf(TooManyQuestionsRequestedException.class);
@@ -77,21 +87,27 @@ class GameServiceTest {
     @Test
     void givenValidQuizAndUser_whenStartGame_thenShouldStartGameSuccessfully() {
         String userId = "user4";
-        GameInput input = new GameInput("quiz", 2, Difficulty.EASY);
+        GameInput input = new GameInput("Quiz", 2, Difficulty.EASY);
 
         Question q1 = new Question();
         q1.setText("First?");
+        q1.setDifficulty(Difficulty.EASY);
+
         Question q2 = new Question();
         q2.setText("Second?");
         Quiz quiz = new Quiz();
+        q2.setDifficulty(Difficulty.EASY);
+
         quiz.setQuestions(Set.of(q1, q2));
 
-        when(quizRepository.findByTitle("quiz")).thenReturn(Optional.of(quiz));
+        when(quizCacheService.getQuizForGame("Quiz")).thenReturn(quiz);
 
         GameEntry entry = gameService.startGame(userId, input);
 
         assertThat(entry).isNotNull();
-        assertThat(entry.question()).contains("Pytanie 1");
+        assertThat(entry.id()).isNotNull();
+        assertThat(entry.question()).startsWith("Question 1:");
+        assertThat(entry.question()).containsAnyOf("First?", "Second?");
     }
 
     @Test
@@ -99,9 +115,16 @@ class GameServiceTest {
         String userId = "user1";
         GameInput input = new GameInput("quiz1", 1, Difficulty.EASY);
 
+        Question question = new Question();
+        question.setText("Question?");
+        question.setDifficulty(Difficulty.EASY);
+
         Quiz quiz = new Quiz();
-        quiz.setQuestions(Set.of(new Question()));
-        when(quizRepository.findByTitle("quiz1")).thenReturn(Optional.of(quiz));
+        quiz.setTitle("quiz1");
+        quiz.setQuestions(Set.of(question));
+
+        when(quizCacheService.getQuizForGame("quiz1")).thenReturn(quiz);
+
         gameService.startGame(userId, input);
 
         assertThatThrownBy(() -> gameService.startGame(userId, input))

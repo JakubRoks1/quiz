@@ -14,7 +14,8 @@ public class CacheConfig {
     @Bean
     public CacheManager cacheManager() {
         CaffeineCacheManager cacheManager = new CaffeineCacheManager("cache");
-        cacheManager.setCaffeine(Caffeine.newBuilder().maximumSize(3));
+        cacheManager.setCaffeine(Caffeine.newBuilder()
+                .maximumSize(3));
         return cacheManager;
     }
 }

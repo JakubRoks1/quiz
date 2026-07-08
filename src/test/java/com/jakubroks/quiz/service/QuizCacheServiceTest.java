@@ -1,18 +1,25 @@
 package com.jakubroks.quiz.service;
 
+import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.repository.QuizRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import java.util.Optional;
 
 @SpringBootTest
 class QuizCacheServiceTest {
 
-    @Autowired
+    @MockitoBean
+    private QuizRepository quizRepository;
+
+    @MockitoSpyBean
     private QuizCacheService quizCacheService;
 
     @Autowired
@@ -20,29 +27,42 @@ class QuizCacheServiceTest {
 
     @BeforeEach
     void clearCache() {
-        cacheManager.getCache("cache").clear();
+        cacheManager.resetCaches();
     }
 
     @Test
     void givenQuizName_whenGetQuizForGame_thenShouldPutQuizIntoCache() {
-        quizCacheService.getQuizForGame("Science");
 
-        assertNotNull(cacheManager.getCache("cache").get("Science"));
+        Mockito.when(quizRepository.findByTitle("Mario")).thenReturn(Optional.of(new Quiz()));
+
+        quizCacheService.getQuizForGame("Mario");
+
+        Mockito.verify(quizRepository).findByTitle("Mario");
+
+        quizCacheService.getQuizForGame("Mario");
+        quizCacheService.getQuizForGame("Mario");
+
+        Mockito.verifyNoMoreInteractions(quizRepository);
     }
 
     @Test
-    void givenMoreThanThreeQuizzes_whenGetQuizForGame_thenShouldNotStoreMoreThanThreeQuizzes() {
+    void givenMoreThanThreeQuizzes_whenGetQuizForGame_thenShouldNotStoreMoreThanThreeQuizzes() throws InterruptedException {
+        Mockito.when(quizRepository.findByTitle(Mockito.anyString())).thenReturn(Optional.of(new Quiz()));
+
         quizCacheService.getQuizForGame("Science");
         quizCacheService.getQuizForGame("Geography");
         quizCacheService.getQuizForGame("Difficulty");
         quizCacheService.getQuizForGame("Quiz");
 
-        com.github.benmanes.caffeine.cache.Cache<Object, Object> nativeCache =
-                (com.github.benmanes.caffeine.cache.Cache<Object, Object>)
-                        cacheManager.getCache("cache").getNativeCache();
+        Mockito.verify(quizRepository, Mockito.times(4)).findByTitle(Mockito.anyString());
 
-        nativeCache.cleanUp();
+        quizCacheService.getQuizForGame("Quiz");
+        quizCacheService.getQuizForGame("Quiz");
 
-        assertTrue(nativeCache.asMap().size() <= 3);
+        Mockito.verify(quizRepository, Mockito.times(4)).findByTitle(Mockito.anyString());
+
+        quizCacheService.getQuizForGame("Difficulty");
+
+        Mockito.verify(quizRepository, Mockito.times(5)).findByTitle(Mockito.anyString());
     }
 }
