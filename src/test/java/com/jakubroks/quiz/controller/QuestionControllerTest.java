@@ -90,6 +90,17 @@ class QuestionControllerTest {
         verify(questionService).deleteQuestion(1L);
     }
 
+    @Test
+    void givenInvalidJson_whenCreatingQuestion_thenReturnsBadRequest() {
+        var result = mockMvc.post().uri("/questions")
+                .contentType("application/json")
+                .content("""
+                    {
+                      "text": "What is the third planet from the Sun?",
+                    }
+                    """);
 
-
+        assertThat(result)
+                .hasStatus(400);
+    }
 }

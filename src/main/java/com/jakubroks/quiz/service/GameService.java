@@ -70,7 +70,7 @@ public class GameService {
         PendingGame pendingGame = new PendingGame(UUID.randomUUID(), quiz, selectedQuestions);
         userGames.put(userId, pendingGame);
 
-        String msg = "Pytanie 1: " + selectedQuestions.get(0).getText();
+        String msg = "Question 1: " + selectedQuestions.get(0).getText();
         return new GameEntry(pendingGame.getId(), msg);
     }
 
@@ -86,7 +86,7 @@ public class GameService {
             int nextQuestionIndex = pendingGame.getAnswers().size();
             Question nextQuestion = pendingGame.getQuestions().get(nextQuestionIndex);
 
-            return new GameEntry(pendingGame.getId(), "Pytanie " + (nextQuestionIndex + 1) + ": " + nextQuestion.getText());
+            return new GameEntry(pendingGame.getId(), "Question " + (nextQuestionIndex + 1) + ": " + nextQuestion.getText());
         } else {
             GameEntry result = new GameEntry(
                     pendingGame.getId(),
