@@ -1,5 +1,6 @@
 package com.jakubroks.quiz.service;
 
+import com.jakubroks.quiz.cache.CaffeineCacheConfig;
 import com.jakubroks.quiz.entity.Quiz;
 import com.jakubroks.quiz.repository.QuizRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,13 +9,21 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
 
 import java.util.Optional;
 
-@SpringBootTest
+//@SpringBootTest(classes = QuizCacheServiceTest.EmptyConfig.class)
+@EnableCaching
+@SpringBootTest(classes = {CaffeineCacheConfig.class, QuizCacheService.class})
 class QuizCacheServiceTest {
+
+//    @Configuration
+//    @Import({CaffeineCacheConfig.class, QuizCacheService.class})
+//    static class EmptyConfig {
+//    }
 
     @MockitoBean
     private QuizRepository quizRepository;
