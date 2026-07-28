@@ -3,6 +3,7 @@ package com.jakubroks.quiz.service;
 import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.service.report.PdfReportGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -10,6 +11,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReportService {
@@ -23,26 +25,56 @@ public class ReportService {
     private String reportsDir;
 
     public byte[] generateReport(QuizResultDTO quizResultDTO) {
+        String resultId = quizResultDTO.id();
+
+        log.info("Generating PDF report for resultId={}", resultId);
+
         byte[] pdfBytes = pdfReportGenerator.saveQuizResultToPdf(quizResultDTO);
 
-        if (saveToDisk) {
-            saveReportToFile(pdfBytes, quizResultDTO.id());
-        }
+        log.debug(
+                "PDF report generated for resultId={}, size={} bytes",
+                resultId,
+                pdfBytes.length
+        );
 
+        if (saveToDisk) {
+            saveReportToFile(pdfBytes, resultId);
+        } else {
+            log.debug(
+                    "Saving report to disk is disabled for resultId={}",
+                    resultId
+            );
+        }
 
         return pdfBytes;
     }
 
     private void saveReportToFile(byte[] pdfBytes, String resultId) {
+        Path dirPath = Path.of(reportsDir);
+        Path filePath = dirPath.resolve("quiz_report_" + resultId + ".pdf");
+
+
         try {
-            Path dirPath = Path.of(reportsDir);
             Files.createDirectories(dirPath);
-
-            Path filePath = dirPath.resolve("quiz_report_" + resultId + ".pdf");
             Files.write(filePath, pdfBytes);
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save PDF report to file", e);
-        }
 
+            log.info(
+                    "PDF report saved successfully for resultId={}, path={}",
+                    resultId,
+                    filePath.toAbsolutePath()
+            );
+        } catch (IOException e) {
+            log.error(
+                    "Failed to save PDF report for resultId={}, path={}",
+                    resultId,
+                    filePath.toAbsolutePath(),
+                    e
+            );
+
+            throw new RuntimeException(
+                    "Failed to save PDF report to file",
+                    e
+            );
+        }
     }
 }
