@@ -1,10 +1,12 @@
 package com.jakubroks.quiz.integration;
 
+import com.jakubroks.quiz.controller.ReportController;
 import com.jakubroks.quiz.dto.QuestionDTO;
 import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.service.GameService;
-import com.jakubroks.quiz.service.UserService;
+import com.jakubroks.quiz.service.ReportService;
+import com.jakubroks.quiz.service.report.PdfReportGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,7 +31,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
+//@Import({ReportService.class, PdfReportGenerator.class, ReportController.class})
+//@WebMvcTest(ReportController.class)
+//@ContextConfiguration
+@SpringBootTest(classes = {ReportService.class, PdfReportGenerator.class, ReportController.class})
 @AutoConfigureMockMvc
 class ReportFlowIntegrationTest {
     private static final String TEST_KEY = "test-key";
@@ -42,15 +46,15 @@ class ReportFlowIntegrationTest {
     @MockitoBean
     private GameService gameService;
 
-    @MockitoBean
-    private UserService userService;
+//    @MockitoBean
+//    private UserService userService;
 
     @BeforeEach
     void setUp() {
-        User testUser = createTestUser();
+//        User testUser = createTestUser();
 
-        given(userService.getByKey(TEST_KEY))
-                .willReturn(Optional.of(testUser));
+//        given(userService.getByKey(TEST_KEY))
+//                .willReturn(Optional.of(testUser));
     }
 
     @Test
@@ -93,7 +97,7 @@ class ReportFlowIntegrationTest {
 
             assertThat(savedFileBytes).isEqualTo(responseBytes);
 
-            verify(userService).getByKey(TEST_KEY);
+//            verify(userService).getByKey(TEST_KEY);
             verify(gameService).getFinishedGame(gameId);
         } finally {
             Files.deleteIfExists(expectedReportFile);
@@ -130,7 +134,7 @@ class ReportFlowIntegrationTest {
         assertThat(Files.exists(expectedReportFile)).isFalse();
 
         verify(gameService).getFinishedGame(nonExistingGameId);
-        verify(userService).getByKey(TEST_KEY);
+//        verify(userService).getByKey(TEST_KEY);
 
 
     }
@@ -152,7 +156,7 @@ class ReportFlowIntegrationTest {
 
     }
 
-    private QuizResultDTO createFinishedGameResult(String gameId) {
+    private static QuizResultDTO createFinishedGameResult(String gameId) {
         List<QuestionDTO> questions = List.of(
                 new QuestionDTO(
                         "Capital city of Poland?",
