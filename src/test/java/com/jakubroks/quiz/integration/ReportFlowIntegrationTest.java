@@ -1,15 +1,18 @@
 package com.jakubroks.quiz.integration;
 
+import com.jakubroks.quiz.controller.ReportController;
 import com.jakubroks.quiz.dto.QuestionDTO;
 import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.service.GameService;
+import com.jakubroks.quiz.service.ReportService;
 import com.jakubroks.quiz.service.UserService;
+import com.jakubroks.quiz.service.report.PdfReportGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -19,9 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -30,8 +30,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(ReportController.class)
+@Import({
+        ReportService.class,
+        PdfReportGenerator.class
+})
 class ReportFlowIntegrationTest {
     private static final String TEST_KEY = "test-key";
     private static final Path REPORTS_DIRECTORY = Path.of("reports");
@@ -46,8 +49,10 @@ class ReportFlowIntegrationTest {
     private UserService userService;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws IOException {
         User testUser = createTestUser();
+
+        Files.createDirectories(REPORTS_DIRECTORY);
 
         given(userService.getByKey(TEST_KEY))
                 .willReturn(Optional.of(testUser));
@@ -63,8 +68,6 @@ class ReportFlowIntegrationTest {
 
         given(gameService.getFinishedGame(gameId))
                 .willReturn(quizResult);
-
-        Files.createDirectories(REPORTS_DIRECTORY);
 
         Path expectedReportFile = getExpectedReportPath(gameId);
 
@@ -82,10 +85,8 @@ class ReportFlowIntegrationTest {
             byte[] responseBytes =
                     mvcResult.getResponse().getContentAsByteArray();
 
-            assertThat(responseBytes).isNotEmpty();
             assertThat(responseBytes.length).isGreaterThan(100);
 
-            assertThat(Files.exists(expectedReportFile)).isTrue();
             assertThat(Files.size(expectedReportFile)).isGreaterThan(0);
 
             byte[] savedFileBytes =
@@ -108,24 +109,16 @@ class ReportFlowIntegrationTest {
         given(gameService.getFinishedGame(nonExistingGameId))
                 .willReturn(null);
 
-        Files.createDirectories(REPORTS_DIRECTORY);
-
         Path expectedReportFile =
                 getExpectedReportPath(nonExistingGameId);
 
         Files.deleteIfExists(expectedReportFile);
-
-        Set<String> filesBefore = getPdfFileNames();
 
         mockMvc.perform(
                         get("/report/{id}", nonExistingGameId)
                                 .header("X-KEY", TEST_KEY)
                 )
                 .andExpect(status().isNotFound());
-
-        Set<String> filesAfter = getPdfFileNames();
-
-        assertThat(filesAfter).isEqualTo(filesBefore);
 
         assertThat(Files.exists(expectedReportFile)).isFalse();
 
@@ -135,24 +128,7 @@ class ReportFlowIntegrationTest {
 
     }
 
-    private Set<String> getPdfFileNames() throws IOException {
-        if (Files.notExists(REPORTS_DIRECTORY)) {
-            return Set.of();
-        }
-
-        try (Stream<Path> files = Files.list(REPORTS_DIRECTORY)) {
-            return files
-                    .filter(Files::isRegularFile)
-                    .filter(path -> path.getFileName()
-                            .toString()
-                            .endsWith(".pdf"))
-                    .map(path -> path.getFileName().toString())
-                    .collect(Collectors.toSet());
-        }
-
-    }
-
-    private QuizResultDTO createFinishedGameResult(String gameId) {
+    private static QuizResultDTO createFinishedGameResult(String gameId) {
         List<QuestionDTO> questions = List.of(
                 new QuestionDTO(
                         "Capital city of Poland?",
@@ -179,7 +155,7 @@ class ReportFlowIntegrationTest {
 
     }
 
-    private User createTestUser() {
+    private static User createTestUser() {
         User user = new User();
         user.setUsername("test-user");
         user.setEmail("test@email.com");

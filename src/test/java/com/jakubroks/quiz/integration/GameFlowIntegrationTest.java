@@ -1,33 +1,45 @@
 package com.jakubroks.quiz.integration;
 
+import com.jakubroks.quiz.config.SecurityConfig;
+import com.jakubroks.quiz.controller.GameController;
 import com.jakubroks.quiz.dto.QuizResultDTO;
 import com.jakubroks.quiz.entity.Difficulty;
+import com.jakubroks.quiz.entity.LoggedUsersMap;
 import com.jakubroks.quiz.entity.Question;
 import com.jakubroks.quiz.entity.Quiz;
+import com.jakubroks.quiz.entity.SavedGameEntry;
 import com.jakubroks.quiz.entity.User;
 import com.jakubroks.quiz.entry.GameEntry;
 import com.jakubroks.quiz.input.AnswerInput;
+import com.jakubroks.quiz.repository.QuizRepository;
+import com.jakubroks.quiz.repository.SavedGameEntryRepository;
+import com.jakubroks.quiz.repository.UserRepository;
+import com.jakubroks.quiz.service.AuthService;
+import com.jakubroks.quiz.service.GameService;
 import com.jakubroks.quiz.service.QuizCacheService;
+import com.jakubroks.quiz.service.ReportService;
 import com.jakubroks.quiz.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.times;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -35,10 +47,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(GameController.class)
+@Import({
+        GameService.class,
+        QuizCacheService.class,
+        UserService.class,
+        LoggedUsersMap.class,
+        SecurityConfig.class
+})
 class GameFlowIntegrationTest {
 
+    private final Map<String, SavedGameEntry> savedGames = new HashMap<>();
     private static final String TEST_KEY = "test-key";
     private static final String ZERO_SCORE_KEY = "zero-score-key";
     private static final String QUIZ_NAME = "Difficulty";
@@ -49,25 +68,49 @@ class GameFlowIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockitoBean
-    private UserService userService;
+    @Autowired
+    private LoggedUsersMap loggedUsersMap;
 
     @MockitoBean
-    private QuizCacheService quizCacheService;
+    private QuizRepository quizRepository;
+
+    @MockitoBean
+    private SavedGameEntryRepository savedGameEntryRepository;
+
+    @MockitoBean
+    private UserRepository userRepository;
+
+    @MockitoBean
+    private ReportService reportService;
+
+    @MockitoBean
+    private AuthService authService;
 
     @BeforeEach
     void setUp() {
-        User testUser = createTestUser();
-        User zeroScoreUser = createZeroScoreUser();
+        loggedUsersMap.removeUserByKey(TEST_KEY);
+        loggedUsersMap.removeUserByKey(ZERO_SCORE_KEY);
 
-        given(userService.getByKey(TEST_KEY))
-                .willReturn(Optional.of(testUser));
+        loggedUsersMap.addUser(TEST_KEY, createTestUser());
+        loggedUsersMap.addUser(ZERO_SCORE_KEY, createZeroScoreUser());
 
-        given(userService.getByKey(ZERO_SCORE_KEY))
-                .willReturn(Optional.of(zeroScoreUser));
+        savedGames.clear();
 
-        given(quizCacheService.getQuizForGame(QUIZ_NAME))
-                .willReturn(createTestQuiz());
+        given(quizRepository.findByTitle(QUIZ_NAME))
+                .willReturn(Optional.of(createTestQuiz()));
+
+        given(savedGameEntryRepository.save(any(SavedGameEntry.class)))
+                .willAnswer(invocation -> {
+                    SavedGameEntry entry = invocation.getArgument(0);
+                    savedGames.put(entry.getId(), entry);
+                    return entry;
+                });
+
+        given(savedGameEntryRepository.findById(anyString()))
+                .willAnswer(invocation -> {
+                    String id = invocation.getArgument(0);
+                    return Optional.ofNullable(savedGames.get(id));
+                });
     }
 
     @Test
@@ -171,15 +214,15 @@ class GameFlowIntegrationTest {
         assertThat(retrievedResult.questions())
                 .hasSameSizeAs(finishedResult.questions());
 
-        verify(userService, times(4))
-                .getByKey(TEST_KEY);
+        verify(quizRepository).findByTitle(QUIZ_NAME);
 
-        verify(quizCacheService)
-                .getQuizForGame(QUIZ_NAME);
+        verify(savedGameEntryRepository).save(any(SavedGameEntry.class));
+
+        verify(savedGameEntryRepository).findById(gameId.toString());
     }
 
     @Test
-    void shouldFinishGameWithZeroScoreWhenAllAnswersAreWrong()
+    void givenLoggedUserAndTwoQuestions_whenSubmittingAllWrongAnswers_thenShouldSaveAndReturnZeroScore()
             throws Exception {
 
         MvcResult startResult = mockMvc.perform(
@@ -279,11 +322,14 @@ class GameFlowIntegrationTest {
         assertThat(retrievedResult.questions())
                 .hasSameSizeAs(finishedResult.questions());
 
-        verify(userService, times(4))
-                .getByKey(ZERO_SCORE_KEY);
+        verify(quizRepository)
+                .findByTitle(QUIZ_NAME);
 
-        verify(quizCacheService)
-                .getQuizForGame(QUIZ_NAME);
+        verify(savedGameEntryRepository)
+                .save(any(SavedGameEntry.class));
+
+        verify(savedGameEntryRepository)
+                .findById(gameId.toString());
     }
 
     private User createTestUser() {
